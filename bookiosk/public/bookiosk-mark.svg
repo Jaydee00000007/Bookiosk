@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 8 108 108" width="1080" height="1080" role="img" aria-label="Bookiosk mark">
+<title>Bookiosk</title>
+<polygon points="28,14 44,14 37,40.8 14,40.8" fill="#052E16"/>
+<polygon points="44,14 60,14 60,40.8 37,40.8" fill="#E9A23B"/>
+<polygon points="60,14 76,14 83,40.8 60,40.8" fill="#052E16"/>
+<polygon points="76,14 92,14 106,40.8 83,40.8" fill="#E9A23B"/>
+<path d="M14 40 a11.5 11.5 0 0 0 23 0 z" fill="#052E16"/>
+<path d="M37 40 a11.5 11.5 0 0 0 23 0 z" fill="#E9A23B"/>
+<path d="M60 40 a11.5 11.5 0 0 0 23 0 z" fill="#052E16"/>
+<path d="M83 40 a11.5 11.5 0 0 0 23 0 z" fill="#E9A23B"/>
+<rect x="20" y="56" width="80" height="46" rx="3" fill="#052E16"/>
+<rect x="14" y="100" width="92" height="10" rx="4" fill="#052E16"/>
+<rect x="30" y="62" width="11" height="38" fill="#C8553D"/>
+<rect x="43" y="70" width="9" height="30" fill="#E9A23B"/>
+<rect x="54" y="60" width="12" height="40" fill="#F4EBD9"/>
+<rect x="68" y="68" width="9" height="32" fill="#C8553D"/>
+<rect x="79" y="62" width="11" height="38" fill="#E9A23B"/>
+</svg>
