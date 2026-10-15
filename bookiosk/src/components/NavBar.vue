@@ -1,14 +1,16 @@
 <script setup>
+    import { ref } from 'vue'
 
+    const menuOpen = ref(false)
 </script>
 
 <template>
     <div class="navbarP fixed-top">
         <div class="logoP">
-                <img src="/bookiosk-logo.svg" alt="Logo" class="logoT">
+                <RouterLink :to="{ path: '/mainview' }"><img src="/bookiosk-logo.svg" alt="Logo" class="logoT"></RouterLink>
         </div>
 
-            <!-- <button
+            <button
                 class="menu-toggle"
                 type="button"
                 :aria-expanded="menuOpen"
@@ -16,10 +18,10 @@
                 aria-label="Toggle navigation"
                 @click="menuOpen = !menuOpen">
                 <span></span><span></span><span></span>
-            </button> -->
+            </button>
 
-            <div class="navlink">
-                <ul>
+            <div id="primary-menu" class="nav-content" :class="{ open: menuOpen }">
+                <ul class="nav-link">
                     <li>
                         <RouterLink :to="{ path: '/mainview', hash: '#search' }">Search</RouterLink>
                     </li>
@@ -33,8 +35,7 @@
                         <RouterLink :to="{ path: '/mainview', hash: '#myshelf' }">My Shelf</RouterLink>
                     </li>
                 </ul>
-            </div>
-            <div class="profile">
+                <div class="profile">
                 <div class="profile-details">
                     <span>{{ Username }}</span>
                     
@@ -46,6 +47,8 @@
                     </svg>
                 </button>
         </div>
+            </div>
+            
     </div>
 </template>
 
@@ -64,7 +67,7 @@
             max-height: auto;
         }
 
-        .navlink{
+        .nav-content{
             ul{
                 display: flex;
                 flex-direction: row;
@@ -90,5 +93,77 @@
                 }
             }
         }
+
+        .menu-toggle {
+            display: none;
+            border: 0;
+            background: transparent;
+            padding: 8px;
+            cursor: pointer;
+            }
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            margin: 5px 0;
+            background: #111111;
+            }
     }
+
+     @media (max-width: 900px) {
+                nav {
+                    padding: 0 16px;
+                }
+
+                .navbarP{
+                    .menu-toggle {
+                    display: block;
+                }
+                .nav-content {
+                    display: none;
+                    position: absolute;
+                    top: 64px;
+                    left: 0;
+                    right: 0;
+                    padding: 18px 16px 20px;
+                    flex-direction: column;
+                    align-items: stretch;
+                    background: #fff;
+                    box-shadow: 0 12px 24px rgba(7, 26, 41, 0.22);
+                }
+                .nav-content.open {
+                    display: flex;
+                }
+                .nav-link {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 0;
+                }
+                .nav-link li {
+                    width: 100%;
+                }
+                .nav-link a {
+                    display: block;
+                    text-wrap: nowrap;
+                    padding: 12px 8px;
+                }
+                .nav-actions {
+                    justify-content: stretch;
+                }
+                .nav-actions button {
+                    flex: 1;
+                }
+                }
+                }
+
+                @media (max-width: 700px) {
+                nav {
+                    padding: 0 16px;
+                }
+
+                .logo {
+                    width: auto;
+                    padding: 0 12px;
+                }
+                }
 </style>
