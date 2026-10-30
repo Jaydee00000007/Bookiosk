@@ -35,9 +35,13 @@
                 <div class="partB">
                     <div class="signUp-form">
                         
-                        <p><span class="big">Start your <span class="small">shelf</span></span><br>Create a free account in under a minute.</p>
-                        <div class="google-signup">
-                            <button>Sign up with Google</button>
+                        <div class="bfore-form">
+                            <div class="shelf">
+                                <p><span class="big">Start your <span class="small">shelf</span></span><br>Create a free account in under a minute.</p>
+                            </div>
+                            <div class="google-signup">
+                                <button>Sign up with Google</button>
+                            </div>
                         </div>
                         <div class="usemail"><hr>or use your email<hr></div>
                         <br>
@@ -58,13 +62,23 @@
                                 <!-- <span>Use at least 8 characters.</span> -->
                             </div>
 
-                            <p>What do you love to read</p><span>(optional)</span>
-                            <span>Pick a few and we'll tune your reading lists.</span>
-                            <ul>
-                                <li vmodel="genre">Fiction</li>
-                            </ul>
-                            <input type="checkbox"><span>I agree to the Terms and Privacy Policy.</span>
-                            <button type="submit">Create account</button>
+                            <div class="text-part">
+                                <p>What do you love to read?<span>(optional)</span></p>
+                                <span>Pick a few and we'll tune your reading lists.</span><br>
+                                <ul>
+                                    <li vmodel="genre" @click="selectGenre('Fiction')">Fiction</li>
+                                    <li vmodel="genre" @click="selectGenre('Poetry')">Poetry</li>
+                                    <li vmodel="genre" @click="selectGenre('History')">History</li>
+                                    <li vmodel="genre" @click="selectGenre('Folktale')">Folktale</li>
+                                    <li vmodel="genre" @click="selectGenre('Politics')">Politics</li>
+                                    <li vmodel="genre" @click="selectGenre('Biography')">Biography</li>
+                                </ul>
+                            </div>
+                                <div class="agreemen">
+                                    <input type="checkbox" vmodel="agreedToTerms">
+                                    <label for="agreedToTerms">I agree to the Terms and Privacy Policy.</label>
+                                </div>
+                                <button type="submit">Create account</button>
                         </form>
                     </div>
                 </div>
@@ -78,12 +92,13 @@
     .signup{
         display:flex;
         flex-direction: row; 
+        flex-wrap: wrap;
         width: 100%;
         height: 100vh;
 
         .sectionA{
             width: 50%;
-            background-color: aquamarine;
+            background-color: #052E16;
             margin: 0;
             padding: 0;
         }
@@ -91,11 +106,12 @@
         .sec1{
             display: flex;
             flex-direction: column;
-            gap: 90px;
-            padding: 20px;
-            height: 100%;
+           
+            justify-content: space-between;
+            padding: 20px 30px;
+            height: 100vh;
             
-
+            
             .logo img{
                 width: 150px;
             }
@@ -105,7 +121,7 @@
                     font-size: 50px;
                     font-weight: bolder;
                     text-wrap: wrap;
-                    width: 450px;
+                    width: 430px;
                     span{
                         color: orange;
                     }
@@ -134,14 +150,17 @@
 
     .sectionB{
         width: 50%;
-        background-color: #ccc;
+        background-color: #FAF9F5;
+        
+        
 
         .sec2{
         display: flex;
         flex-direction: column;
-        padding: 20px;
+        padding: 20px 20px;
         text-align: center;
-        gap: 20px;
+        gap: 5px;
+        height: 100vh;
 
         .partA{
             display: flex;
@@ -153,21 +172,25 @@
 
         }
         .partB{
-            display: flex;
+            /* display: flex;
             justify-content: space-between;
-            align-items: start;
+            align-items: center;
+            padding: 0px 30px;
+            width: 100%; */
 
             .signUp-form{
                 display: flex;
                 flex-direction: column;
                 gap: 1px;
-                width: 100%;
+                align-self: center;    
+                text-align: start;
                 
 
                 .big{
                     font-size: 30px;
                     font-weight: bolder;
                     text-align: start;
+                    margin-right: 60px;
                     span{
                         color: rgb(33, 92, 33);
                     }
@@ -182,6 +205,17 @@
                     padding: 10px 20px;
                     border: 1px solid #ccc;
                     cursor: pointer;
+                }
+
+                .bfore-form{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: center;
+
+                    button{
+                        width: 100%;
+                    }
                 }
 
                 form{
@@ -208,7 +242,12 @@
                         border-radius: 10px;
                         border: 1px solid #ccc;
                         width: 100%;
-                        height: 20px;
+                        height: 15px;
+                    }
+
+                    label{
+                        font-size: small;
+                        color: black;
                     }
 
                     button[type="submit"]{
@@ -218,6 +257,47 @@
                         padding: 10px 20px;
                         border: none;
                         cursor: pointer;
+                    }
+
+                    .text-part{
+                        display: flex;
+                        flex-direction: column;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                        align-items: center;
+
+                        p{
+                            text-wrap: nowrap;
+                            span{
+                                font-size: small;
+                                color: gray;
+                                margin-left: 5px;
+                            }
+                        }
+
+                        ul{
+                            display: flex;
+                            flex-direction: row;
+                            flex-wrap: wrap;
+                            gap: 10px;
+                            list-style-type: none;
+                            padding: 0;
+                            margin: 0;
+
+                            li{
+                                background-color: #ccc;
+                                color: #000000;
+                                padding: 5px 10px;
+                                border-radius: 15px;
+                                cursor: pointer;
+                                font-size: small;
+
+                                &:active{
+                                    background-color: #052E16;
+                                    color: #ffffff;
+                                }
+                            }
+                        }
                     }
                 }
             }
