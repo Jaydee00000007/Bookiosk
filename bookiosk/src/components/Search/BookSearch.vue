@@ -1,18 +1,75 @@
 <script setup>
-   
+    import { ref } from "vue";
+    import { searchBooks } from "../services/googleBooks";
+
+        const searchQuery = ref("");
+        const books = ref([]);
+        const loading = ref(false);
+        const error = ref("");
+
+        const handleSearch = async () => {
+        if (!searchQuery.value.trim()) return;
+
+        loading.value = true;
+        error.value = "";
+
+        try {
+            books.value = await searchBooks(searchQuery.value);
+        } catch (err) {
+            error.value = err.message;
+            books.value = [];
+        } finally {
+            loading.value = false;
+        }
+        };
 </script>
 
 <template>
-    <div class="searchinput">
-        <div class="search-btn">
-            <button><span>⌕</span></button>
+    <form @submit.prevent="handleSearch">
+        <div class="searchinput">
+            <div class="search-btn">
+                <button type="submit" :disabled="loading">
+                    <span>⌕</span>
+                </button>
+            </div>
+            <input
+            v-model="searchQuery" 
+            placeholder="Search by title, author, or ISBN..."
+            @input="$emit('update:search', searchQuery)"
+            type="text">
+
+            <div class="book-grid">
+                <article
+                    v-for="book in books"
+                    :key="book.id"
+                    class="book-card"
+                >
+                    <img
+                    v-if="book.volumeInfo.imageLinks?.thumbnail"
+                    :src="book.volumeInfo.imageLinks.thumbnail"
+                    :alt="book.volumeInfo.title"
+                    />
+
+                    <h3>{{ book.volumeInfo.title }}</h3>
+
+                    <p>
+                    {{ book.volumeInfo.authors?.join(", ") || "Unknown author" }}
+                    </p>
+
+                    <a
+                    :href="book.volumeInfo.infoLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    View Book
+                    </a>
+                </article>
+                <p v-if="error">{{ error }}</p>
+                <p v-if="loading">Finding books...</p>
+            </div>
         </div>
-        <input
-        v-model="modelSearch" 
-        placeholder="Search by title, author, or ISBN..."
-        @input="$emit('update:search', modelSearch)"
-        type="text">
-    </div>
+    </form>
+    
 </template>
 
 <style scoped>
@@ -61,3 +118,9 @@
             }
         }
 </style>
+
+
+
+
+
+

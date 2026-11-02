@@ -11,6 +11,18 @@
                 <h1>Stories from Nigeria and <span>across Africa</span></h1>
                 <div class="search-space">
                     <BookSearch />
+                    <div class="filter-space"></div>
+                        <button class="filter-btn">Nigeria</button>
+                        <button class="filter-btn">Africa</button>
+                        <button class="filter-btn">Global</button>
+                    </div>
+                    <div class="writter-space">
+                        <ul>
+                            <li>Writers from Nigeria</li>
+                            <li>Writers from Africa</li>
+                            <li>Writers from Global</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
