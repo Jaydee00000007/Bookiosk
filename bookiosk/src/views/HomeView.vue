@@ -1,6 +1,57 @@
 <script setup>
-    import BookSearch from '../components/Search/BookSearch.vue';
-    import NavBar from '../components/NavBar.vue'
+        import { ref, onMounted } from 'vue'
+        import { searchBooks } from '../services/googleBooks'
+        import BookSearch from '../components/Search/BookSearch.vue';
+        import NavBar from '../components/NavBar.vue'
+        import BookCard from '../components/BookCard.vue'
+
+        import {
+        genres,
+        regions,
+        authors
+        } from '../data/collections'
+
+        const discovery = ref({
+        genres: {},
+        regions: {},
+        authors: {}
+        })
+        const books = ref([])
+
+        async function loadDiscovery() {
+        const loadCollection = async (items) => {
+            const results = await Promise.all(
+            items.map(async (item) => {
+                try {
+                const books = await searchBooks(
+                    item.query || `inauthor:${item}`
+                )
+
+                return [item.name || item, books]
+                } catch {
+                return [item.name || item, []]
+                }
+            })
+            )
+
+            return Object.fromEntries(results)
+        }
+
+        const [genreBooks, regionalBooks, authorBooks] =
+            await Promise.all([
+            loadCollection(genres),
+            loadCollection(regions),
+            loadCollection(authors)
+            ])
+
+        discovery.value = {
+            genres: genreBooks,
+            regions: regionalBooks,
+            authors: authorBooks
+        }
+        }
+
+        onMounted(loadDiscovery)
 </script>
 
 <template>
@@ -11,18 +62,25 @@
                 <h1>Stories from Nigeria and <span>across Africa</span></h1>
                 <div class="search-space">
                     <BookSearch />
-                    <div class="filter-space"></div>
+                    <div class="filter-space">
                         <button class="filter-btn">Nigeria</button>
                         <button class="filter-btn">Africa</button>
                         <button class="filter-btn">Global</button>
                     </div>
-                    <div class="writter-space">
-                        <ul>
-                            <li>Writers from Nigeria</li>
-                            <li>Writers from Africa</li>
-                            <li>Writers from Global</li>
-                        </ul>
-                    </div>
+                </div>
+                <div class="writter-space">
+                    <ul>
+                        <li>Writers from Nigeria</li>
+                        <li>Writers from Africa</li>
+                        <li>Writers from Global</li>
+                    </ul>
+                </div>
+                <div class="book-grid">
+                    <BookCard
+                        v-for="book in books"
+                        :key="book.id"
+                        :book="book"
+                    />
                 </div>
             </div>
         </div>

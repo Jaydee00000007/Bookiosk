@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from "vue";
-    import { searchBooks } from "../services/googleBooks";
+    import { searchBooks } from "../../services/googleBooks";
 
         const searchQuery = ref("");
         const books = ref([]);
@@ -118,7 +118,6 @@
             }
         }
 </style>
-
 
 
 
