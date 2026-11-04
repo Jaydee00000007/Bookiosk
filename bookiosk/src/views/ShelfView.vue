@@ -1,5 +1,5 @@
 <script setup>
-import BookCard from '../components/BookCard.vue'
+import BookGrid from '../components/BookGrid.vue'
 import { useMyShelf } from '../composables/useMyShelf'
 
 const { savedBooks } = useMyShelf()
@@ -9,12 +9,10 @@ const { savedBooks } = useMyShelf()
   <main>
     <h1>My Shelf</h1>
     <p v-if="savedBooks.length === 0">No saved books yet.</p>
-    <div v-else class="book-grid">
-      <BookCard
-        v-for="book in savedBooks"
-        :key="book.id"
-        :book="book"
-      />
-    </div>
+    <BookGrid
+      v-else
+      :books="savedBooks"
+      empty-message="No saved books yet."
+    />
   </main>
 </template>

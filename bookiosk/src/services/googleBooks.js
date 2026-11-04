@@ -41,8 +41,18 @@ async function requestBooks(url, options = {}) {
   const response = await fetch(url, options)
 
   if (!response.ok) {
+    let apiMessage = ''
+
+    try {
+      const body = await response.json()
+      apiMessage = body.error?.message || ''
+    } catch {
+      apiMessage = ''
+    }
+
     throw new Error(
-      `Google Books API Error! Status: ${response.status}`
+      apiMessage ||
+      `Google Books API error: ${response.status} ${response.statusText}`
     )
   }
 
@@ -82,7 +92,8 @@ export async function searchBooks(query, options = {}) {
     )
   }
 
-  return requestBooks(url)
+  const result = await requestBooks(url)
+  return result.items || []
 }
 
 // Reusable reactive fetch composable
