@@ -205,3 +205,16 @@ export const getFreeBooks = () =>
 
   return requestBooks(url)
 }
+
+  export function getReadingAccess(book) {
+    const access = book.accessInfo || {}
+
+    return {
+      viewability: access.viewability,
+      embeddable: access.embeddable,
+      publicDomain: access.publicDomain,
+      canReadAll: access.viewability === 'ALL_PAGES',
+      canPreview: access.viewability === 'PARTIAL',
+      readerLink: access.webReaderLink
+    }
+  }
