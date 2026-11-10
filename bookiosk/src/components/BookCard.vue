@@ -69,8 +69,8 @@ function openBook() {
   grid-template-rows: 160px 1fr;
   border: 1px solid #e7e3dc;
   border-radius: 14px;
-  background: #fff;
-  padding: 5px 5px;
+  background: #ffffffbd;
+  padding: 5px 10px;
   box-shadow: 0 8px 24px rgb(25 56 25 / 8%);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }

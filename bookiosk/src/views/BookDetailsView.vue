@@ -55,6 +55,7 @@ onMounted(async () => {
       >
         Read Preview
       </a>
+      <button><router-link to="/">Back to Home</router-link></button>
     </section>
   </main>
 </template>

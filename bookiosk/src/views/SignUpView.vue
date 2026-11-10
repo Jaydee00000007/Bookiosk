@@ -26,7 +26,7 @@
             <div class="sec2">
                 <div class="partA">
                     <div class="home-btn">
-                        <RouterLink :to="{ path: '/mainview'}">Back to home</RouterLink>
+                        <RouterLink :to="{ path: '/'}">Back to home</RouterLink>
                     </div>
                     <div class="signIn-btn">
                         Already have an account? <RouterLink :to="{ path: '/signin'}">Sign in</RouterLink>

@@ -18,8 +18,6 @@ defineProps({
 </script>
 
 <template>
-     
-
   <section class="book-results" aria-live="polite">
     <p v-if="loading" class="book-state" role="status">Finding books...</p>
     <p v-else-if="books.length === 0" class="book-state">{{ emptyMessage }}</p>
