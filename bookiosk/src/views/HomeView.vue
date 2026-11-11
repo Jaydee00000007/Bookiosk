@@ -1,58 +1,46 @@
 <script setup>
-        import { ref, onMounted } from 'vue'
+        import { ref } from 'vue'
         import { searchBooks } from '../services/googleBooks'
         import BookSearch from '../components/Search/BookSearch.vue';
         import NavBar from '../components/NavBar.vue'
         import BookGrid from '../components/BookGrid.vue'
+        import BrowseByGenre from '../components/Search/BrowseByGenre.vue'
+        import BrowseByRegion from '../components/Search/BrowseByRegion.vue'
+        import BookOfTheWeek from '../components/BookOfTheWeek.vue'
 
-        import {
-        genres,
-        regions,
-        authors
-        } from '../data/collections'
-
-        const discovery = ref({
-        genres: {},
-        regions: {},
-        authors: {}
-        })
         const books = ref([])
         const searchLoading = ref(false)
+        const searchError = ref('')
+        let browseRequestId = 0
 
-        async function loadDiscovery() {
-        const loadCollection = async (items) => {
-            const results = await Promise.all(
-            items.map(async (item) => {
-                try {
-                const books = await searchBooks(
-                    item.query || `inauthor:${item}`
-                )
+        async function handleBrowse(query) {
+            const requestId = ++browseRequestId
+            searchLoading.value = true
+            searchError.value = ''
 
-                return [item.name || item, books]
-                } catch {
-                return [item.name || item, []]
+            try {
+                const results = await searchBooks(query, { maxResults: 12 })
+
+                if (requestId === browseRequestId) {
+                    books.value = results
                 }
-            })
-            )
-
-            return Object.fromEntries(results)
+            } catch (error) {
+                if (requestId === browseRequestId) {
+                    books.value = []
+                    searchError.value = error.message || 'Unable to load books.'
+                }
+            } finally {
+                if (requestId === browseRequestId) {
+                    searchLoading.value = false
+                }
+            }
         }
 
-        const [genreBooks, regionalBooks, authorBooks] =
-            await Promise.all([
-            loadCollection(genres),
-            loadCollection(regions),
-            loadCollection(authors)
-            ])
-
-        discovery.value = {
-            genres: genreBooks,
-            regions: regionalBooks,
-            authors: authorBooks
+        function handleSearchResults(results) {
+            browseRequestId++
+            books.value = results
+            searchError.value = ''
         }
-        }
-
-        onMounted(loadDiscovery)
 </script>
 
 <template>
@@ -64,7 +52,7 @@
                 <div class="search-space">
                     <div class="search-area">
                         <BookSearch
-                            @search-results="books = $event"
+                            @search-results="handleSearchResults"
                             @loading-change="searchLoading = $event"
                         />
                     </div>
@@ -76,12 +64,18 @@
                 </div>
             </div>
             <div id="search" class="book-grid">
+                    <p v-if="searchError" class="search-error" role="alert">
+                        {{ searchError }}
+                    </p>
                     <BookGrid
                         :books="books"
                         :loading="searchLoading"
                         empty-message="Search for books to see them here."
                     />
                 </div>
+            <BrowseByGenre @browse="handleBrowse" />
+            <BrowseByRegion @browse="handleBrowse" />
+            <BookOfTheWeek />
         </div>
     </div>
 </template>
@@ -182,10 +176,10 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-color: #040629;
+        background-color: #f5f2Eb ;
         width: 90%;
         height: 100%;
-        border-radius: 5px;
+        border-radius: 10px;
         align-self: center;
         border:#193819 1px solid;
         padding: 20px 10px;

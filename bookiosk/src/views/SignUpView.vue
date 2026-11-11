@@ -6,11 +6,11 @@
          <div class="sectionA">
                 <div class="sec1">
                     <div class="logo"><img src="/bookiosk-logo.svg" alt="logo"></div>
-                        <div class="hero">
+                        <div class="hero bounce-right">
                             <h2>Build a shelf of <span>stories you love</span></h2>
                             <p>Save books, get reading lists shaped around your taste, and discover authors from every corner of the continent.</p>
                         </div>
-                        <div class="spotlight">
+                        <div class="spotlight bounce-right">
                             <div class="spotlight-tile">
                                 <div class="author-initials"></div>
                                 <div class="author">

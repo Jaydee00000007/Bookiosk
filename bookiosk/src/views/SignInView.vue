@@ -7,11 +7,11 @@
          <div class="sectionA">
                 <div class="sec1">
                     <div class="logo"><img src="/bookiosk-logo.svg" alt="logo"></div>
-                        <div class="hero">
+                        <div class="hero bounce-right">
                             <h2>Stories from Nigeria and<span>across Africa</span></h2>
                             <p>Sign in to pick up your reading list right where you left it.</p>
                         </div>
-                        <div class="spotlight">
+                        <div class="spotlight bounce-right">
                             <div class="spotlight-tile">
                                 <div class="bookcover"></div>
                                 <div class="author">
