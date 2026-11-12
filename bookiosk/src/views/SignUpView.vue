@@ -1,93 +1,152 @@
 <script setup>
+import { ref } from 'vue'
+
+const fullname = ref('')
+const email = ref('')
+const password = ref('')
+const selectedGenres = ref([])
+const agreedToTerms = ref(false)
+const statusMessage = ref('')
+const genres = ['Fiction', 'Poetry', 'History', 'Folktale', 'Politics', 'Biography']
+
+function selectGenre(genre) {
+  selectedGenres.value = selectedGenres.value.includes(genre)
+    ? selectedGenres.value.filter(selectedGenre => selectedGenre !== genre)
+    : [...selectedGenres.value, genre]
+}
+
+function handleSubmit() {
+  statusMessage.value =
+    'Your details are valid, but sign-up is not connected to an authentication service yet. Nothing was sent or saved.'
+}
+
+function clearStatus() {
+  statusMessage.value = ''
+}
 </script>
 
 <template>
-    <div class="signup">
-         <div class="sectionA">
-                <div class="sec1">
-                    <div class="logo"><img src="/bookiosk-logo.svg" alt="logo"></div>
-                        <div class="hero bounce-right">
-                            <h2>Build a shelf of <span>stories you love</span></h2>
-                            <p>Save books, get reading lists shaped around your taste, and discover authors from every corner of the continent.</p>
-                        </div>
-                        <div class="spotlight bounce-right">
-                            <div class="spotlight-tile">
-                                <div class="author-initials"></div>
-                                <div class="author">
-                                    <span>author spotlight</span>
-                                    <h4>{{ authorname }}</h4>
-                                    <span class="authorsbook">{{ authorsbooks }}</span>
-                                </div>
-                            </div>
-                    </div>
-                </div>
-         </div>
-         <div class="sectionB">
-            <div class="sec2">
-                <div class="partA">
-                    <div class="home-btn">
-                        <RouterLink :to="{ path: '/'}">Back to home</RouterLink>
-                    </div>
-                    <div class="signIn-btn">
-                        Already have an account? <RouterLink :to="{ path: '/signin'}">Sign in</RouterLink>
-                    </div>
-                </div>
-                <div class="partB">
-                    <div class="signUp-form">
-                        
-                        <div class="bfore-form">
-                            <div class="shelf">
-                                <p><span class="big">Start your <span class="small">shelf</span></span><br>Create a free account in under a minute.</p>
-                            </div>
-                            <div class="google-signup">
-                                <button>Sign up with Google</button>
-                            </div>
-                        </div>
-                        <div class="usemail"><hr>or use your email<hr></div>
-                        <br>
-                        <form>
-                            <div class="input-part">
-                                <label for="fullname">Full Name</label>
-                                <input type="text" placeholder="Your name" vmodel="fullname" />
-                            </div>
+  <main class="signup">
+    <section class="sectionA">
+      <div class="sec1">
+        <RouterLink class="logo" to="/" aria-label="Bookiosk home">
+          <img src="/bookiosk-logo.svg" alt="Bookiosk">
+        </RouterLink>
+        <div class="hero">
+          <h1>Build a shelf of <span>stories you love</span></h1>
+          <p>Save books, shape reading lists around your taste, and discover authors from across the continent.</p>
+        </div>
+        <div class="spotlight-tile">
+          <div class="author-initials" aria-hidden="true">CA</div>
+          <div class="author">
+            <span>Author spotlight</span>
+            <h2>Chimamanda Ngozi Adichie</h2>
+            <p>Novelist and storyteller</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-                            <div class="input-part">
-                                <label for="email">Email</label>
-                                <input type="email" placeholder="you@example.com" vmodel="email" />
-                            </div>
+    <section class="sectionB">
+      <div class="sec2">
+        <nav class="partA" aria-label="Account navigation">
+          <RouterLink to="/">Back to home</RouterLink>
+          <p>Already have an account? <RouterLink to="/signin">Sign in</RouterLink></p>
+        </nav>
 
-                            <div class="input-part">
-                                <label for="password">Password</label>
-                                <input type="password" placeholder="Create a password" vmodel="password" required/><br>
-                                <!-- <span>Use at least 8 characters.</span> -->
-                            </div>
+        <div class="partB">
+          <div class="signUp-form">
+            <header class="form-heading">
+              <p class="eyebrow">Start your shelf</p>
+              <h2>Create a free account.</h2>
+            </header>
 
-                            <div class="text-part">
-                                <div class="top-text">
-                                    <p>What do you love to read?<span>(optional)</span></p>
-                                    <span class="note">Pick a few and we'll tune your reading lists.</span>  
-                                </div>
-                                <ul>
-                                    <li class="p-genre active" vmodel="genre" @click="selectGenre('Fiction')">Fiction</li>
-                                    <li class="p-genre" vmodel="genre" @click="selectGenre('Poetry')">Poetry</li>
-                                    <li class="p-genre" vmodel="genre" @click="selectGenre('History')">History</li>
-                                    <li class="p-genre" vmodel="genre" @click="selectGenre('Folktale')">Folktale</li>
-                                    <li class="p-genre" vmodel="genre" @click="selectGenre('Politics')">Politics</li>
-                                    <li class="p-genre" vmodel="genre" @click="selectGenre('Biography')">Biography</li>
-                                </ul>
-                            </div>
-                                <div class="agreemen">
-                                    <input type="checkbox" vmodel="agreedToTerms">
-                                    <label for="agreedToTerms">I agree to the Terms and Privacy Policy.</label>
-                                </div>
-                                <button type="submit">Create account</button>
-                        </form>
-                    </div>
-                </div>
-                <div class="partC"><span>Book data from the Google Books API.</span></div>
-            </div>
-         </div>
-    </div>
+            <button class="google-signup" type="button" disabled>
+              Google sign-up isn't configured yet
+            </button>
+            <p class="usemail">or use your email</p>
+
+            <form @submit.prevent="handleSubmit" @input="clearStatus">
+              <div class="input-part">
+                <label for="signup-fullname">Full name</label>
+                <input
+                  id="signup-fullname"
+                  v-model="fullname"
+                  type="text"
+                  name="name"
+                  autocomplete="name"
+                  placeholder="Your name"
+                  required
+                >
+              </div>
+
+              <div class="input-part">
+                <label for="signup-email">Email</label>
+                <input
+                  id="signup-email"
+                  v-model="email"
+                  type="email"
+                  name="email"
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                  required
+                >
+              </div>
+
+              <div class="input-part">
+                <label for="signup-password">Password</label>
+                <input
+                  id="signup-password"
+                  v-model="password"
+                  type="password"
+                  name="password"
+                  autocomplete="new-password"
+                  placeholder="At least 8 characters"
+                  minlength="8"
+                  required
+                >
+              </div>
+
+              <fieldset class="text-part">
+                <legend>What do you love to read? <span>(optional)</span></legend>
+                <p class="note">Pick a few to shape your reading lists.</p>
+                <ul>
+                  <li v-for="genre in genres" :key="genre">
+                    <button
+                      class="p-genre"
+                      :class="{ active: selectedGenres.includes(genre) }"
+                      type="button"
+                      :aria-pressed="selectedGenres.includes(genre)"
+                      @click="selectGenre(genre)"
+                    >
+                      {{ genre }}
+                    </button>
+                  </li>
+                </ul>
+              </fieldset>
+
+              <label class="agreemen" for="signup-terms">
+                <input
+                  id="signup-terms"
+                  v-model="agreedToTerms"
+                  type="checkbox"
+                  required
+                >
+                I agree to the Terms and Privacy Policy.
+              </label>
+
+              <button class="submit-button" type="submit">Create account</button>
+              <p v-if="statusMessage" class="form-status" role="status">
+                {{ statusMessage }}
+              </p>
+            </form>
+          </div>
+        </div>
+
+        <footer class="partC">Book data from the Google Books API.</footer>
+      </div>
+    </section>
+  </main>
 </template>
 
 <style scoped>
@@ -335,6 +394,234 @@
             width: 75px;
             padding: 0%;
             margin: 0%;
+        }
+    }
+
+    .signup {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .signup .sectionA,
+    .signup .sectionB {
+        width: auto;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .signup .sec1 {
+        min-height: 100vh;
+        height: auto;
+        box-sizing: border-box;
+    }
+
+    .signup .sectionB .sec2 {
+        width: 100%;
+        max-width: 540px;
+        min-height: 100vh;
+        height: auto;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .signup .sectionB .sec2 .partA {
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .signup .sectionB .sec2 .partA p {
+        margin: 0;
+    }
+
+    .signup .sectionB .sec2 .partB {
+        width: 100%;
+        min-width: 0;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .signup .sectionB .sec2 .partB .signUp-form {
+        width: 100%;
+        max-width: 400px;
+        align-items: stretch;
+        box-sizing: border-box;
+        gap: 1rem;
+    }
+
+    .signup .sectionB .sec2 .partB .signUp-form form {
+        width: 100%;
+        box-sizing: border-box;
+        gap: 1rem;
+    }
+
+    .signup .sectionB .sec2 .partB .signUp-form form input[type="text"],
+    .signup .sectionB .sec2 .partB .signUp-form form input[type="email"],
+    .signup .sectionB .sec2 .partB .signUp-form form input[type="password"] {
+        width: 100%;
+        min-height: 44px;
+        height: auto;
+        box-sizing: border-box;
+    }
+
+    .signup .hero h1 {
+        max-width: 480px;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        line-height: 1.05;
+    }
+
+    .signup .hero h1 span {
+        display: block;
+        color: orange;
+    }
+
+    .signup .spotlight-tile {
+        align-items: center;
+        gap: 1rem;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .signup .author-initials {
+        display: grid;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        color: #052e16;
+        background: #f5f2eb;
+        font-weight: 700;
+    }
+
+    .signup .author h2,
+    .signup .author p {
+        margin: 0.25rem 0 0;
+        color: #fff;
+    }
+
+    .signup .form-heading .eyebrow {
+        margin: 0 0 0.4rem;
+        color: #52714f;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .signup .form-heading h2 {
+        margin: 0;
+        color: #193819;
+        font-size: 2rem;
+    }
+
+    .signup .google-signup {
+        min-height: 44px;
+        border: 1px solid #d5d9d3;
+        border-radius: 8px;
+        color: #596059;
+        background: #ebece8;
+        cursor: not-allowed;
+    }
+
+    .signup .text-part {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    .signup .text-part legend {
+        padding: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .signup .text-part legend span,
+    .signup .text-part .note {
+        color: #667066;
+        font-size: 0.8rem;
+        font-weight: 400;
+    }
+
+    .signup .sectionB .sec2 .partB .signUp-form form .text-part ul {
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .signup .sectionB .sec2 .partB .signUp-form form .text-part ul li {
+        display: block;
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+    }
+
+    .signup .p-genre {
+        padding: 0.45rem 0.75rem;
+        border: 1px solid #c8d0c5;
+        border-radius: 999px;
+        color: #193819;
+        background: #fff;
+        font: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+
+    .signup .p-genre.active {
+        border-color: #193819;
+        color: #fff;
+        background: #193819;
+    }
+
+    .signup .agreemen {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .signup .agreemen input {
+        accent-color: #193819;
+    }
+
+    .signup .submit-button {
+        min-height: 44px;
+        border: 0;
+        border-radius: 25px;
+        color: #fff;
+        background: #193819;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .signup .form-status {
+        margin: 0;
+        color: #193819;
+        line-height: 1.5;
+    }
+
+    .signup :focus-visible {
+        outline: 3px solid #d87b18;
+        outline-offset: 3px;
+    }
+
+    @media (max-width: 760px) {
+        .signup {
+            grid-template-columns: 1fr;
+        }
+
+        .signup .sec1 {
+            min-height: 380px;
+        }
+
+        .signup .sectionB .sec2 {
+            min-height: auto;
         }
     }
 </style>

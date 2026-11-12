@@ -27,6 +27,7 @@ describe('HomeView browsing', () => {
           NavBar: true,
           BookSearch: true,
           BookOfTheWeek: true,
+          AuthorSpotlight: true,
           BookGrid: {
             props: ['books'],
             template: '<div class="results">{{ books.map(book => book.volumeInfo.title).join(", ") }}</div>'
@@ -71,6 +72,7 @@ describe('HomeView browsing', () => {
           NavBar: true,
           BookSearch: true,
           BookOfTheWeek: true,
+          AuthorSpotlight: true,
           BookGrid: {
             props: ['books'],
             template: '<div class="results">{{ books.map(book => book.volumeInfo.title).join(", ") }}</div>'

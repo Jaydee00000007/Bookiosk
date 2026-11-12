@@ -7,6 +7,7 @@
         import BrowseByGenre from '../components/Search/BrowseByGenre.vue'
         import BrowseByRegion from '../components/Search/BrowseByRegion.vue'
         import BookOfTheWeek from '../components/BookOfTheWeek.vue'
+        import AuthorSpotlight from '../components/AuthorSpotlight.vue'
 
         const books = ref([])
         const searchLoading = ref(false)
@@ -76,6 +77,7 @@
             <BrowseByGenre @browse="handleBrowse" />
             <BrowseByRegion @browse="handleBrowse" />
             <BookOfTheWeek />
+            <AuthorSpotlight />
         </div>
     </div>
 </template>

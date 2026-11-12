@@ -40,7 +40,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="main-content" aria-labelledby="book-of-the-week-title">
+  <section class="book-of-the-week-content" aria-labelledby="book-of-the-week-title">
     <div class="book-details">
       <span>Book of the week</span>
       <p v-if="loading" role="status">Finding a featured book...</p>
@@ -48,7 +48,7 @@ onMounted(async () => {
       <p v-else-if="!book">No featured book is available right now.</p>
       <template v-else>
         <h2 id="book-of-the-week-title">{{ title }}</h2>
-        <p>{{ volume.description || 'Discover this featured title from African literature.' }}</p>
+        <p class="bk-text">{{ volume.description || 'Discover this featured title from African literature.' }}</p>
         <div class="book-actions">
           <a
             v-if="volume.previewLink"
@@ -86,45 +86,62 @@ onMounted(async () => {
 
 <style scoped>
 
-.main-content {
+.book-of-the-week-content {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 2rem;
   box-sizing: border-box;
-  width: 70%;
+  width: 80%;
   max-width: 70%;
   min-height: 260px;
   flex-shrink: 0;
-  padding: 20px 0px;
-  background-color: #f5f2eb;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.603);
 }
 
 .book-details {
- width: 50%;
+  flex: 1 1 0;
+  min-width: 0;
+  box-sizing: border-box;
+  border: #193819 1px solid;
+  padding: 1rem;
 }
 
 .book-details > span {
   color: #193819;
+  background-color: #d6e6d4;
   font-weight: 700;
-  text-transform: uppercase;
+  font-size: 10px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 10px;
 }
 
 .book-details h2 {
   margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: #193819;
 }
 
 .book-details p {
-  width: 250px;
+  width: 100%;
   max-width: 100%;  
+  color: #19381977;
   margin-bottom: 1rem;
   line-height: 1.5;
   font-size: 0.95rem;
   text-wrap: wrap;
   text-align: justify;
+}
+
+.book-details p.bk-text {
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .book-actions {
@@ -138,7 +155,7 @@ onMounted(async () => {
 .add-to-library-btn {
   padding: 0.65rem 1rem;
   border: 1px solid #193819;
-  border-radius: 6px;
+  border-radius: 16px;
   color: #fff;
   background: #193819;
   font: inherit;
@@ -147,17 +164,23 @@ onMounted(async () => {
 }
 
 .book-image {
-  width: 50%;
-  min-height: 190px;
   display: grid;
+  flex: 0 0 40%;
+  box-sizing: border-box;
+  width: fit-content;
+  height: 100%;
+  min-height: 250px;
   place-items: center;
   overflow: hidden;
+  border: #193819 1px solid;
 }
 
 .book-image img {
   max-width: 100%;
-  max-height: 220px;
+  max-height: 100%;
   object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cover-fallback {
@@ -173,8 +196,9 @@ onMounted(async () => {
 }
 
 @media (max-width: 600px) {
-  .main-content {
+  .book-of-the-week-content {
     width: 90%;
+    max-width: 90%;
     padding: 20px;
   }
 }
