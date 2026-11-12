@@ -66,7 +66,7 @@ onMounted(async () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Explore books
+          Explore her books
         </a>
       </div>
     </div>
@@ -81,14 +81,15 @@ onMounted(async () => {
   align-items: center;
   gap: 2rem;
   box-sizing: border-box;
-  width: 80%;
+  width: 90%;
   max-width: 70%;
   min-height: 260px;
   flex-shrink: 0;
-  padding: 20px;
-  background-color: #f1f1f1;
+  padding: 10px 20px;
+  margin-top: 40px;
+  background-color: #f8eae2;
   border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 2px solid #f83a0036;
 }
 
 .author-image {
@@ -116,17 +117,17 @@ onMounted(async () => {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 10px;
-  color: #193819;
-  background-color: #d6e6d4;
-  font-size: 0.75rem;
+  color: #d43200;
+  background-color: #f8eae2;
+  font-size: 0.5rem;
   font-weight: 700;
-  text-transform: uppercase;
+  border: 1px solid #f83a00;
 }
 
 .author-details h2 {
   margin-bottom: 0.5rem;
   color: #193819;
-  font-size: 2rem;
+  font-size: 1.25rem;
 }
 
 .author-details p {
@@ -145,11 +146,10 @@ onMounted(async () => {
 
 .explore-author-btn {
   display: inline-block;
-  padding: 0.65rem 1rem;
-  border: 1px solid #193819;
   border-radius: 16px;
-  color: #fff;
-  background: #193819;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #d43200;
   text-decoration: none;
 }
 
