@@ -13,18 +13,23 @@ html, body, #app {
 }
 
 .glass-card {
-  /* 1. Semi-transparent background */
   background: rgba(255, 255, 255, 0.2);
-  
-  /* 2. Background blur & saturation boost */
   backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%); /* Safari support */
-  
-  /* 3. Subtle edge highlight & shadow */
+  -webkit-backdrop-filter: blur(10px) saturate(180%); 
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
+
+.glass-card2 {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); 
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
 
 .bounce-right {
   animation: bounceInRight 0.85s ease-out 0s 1 normal both;

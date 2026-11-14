@@ -97,4 +97,41 @@ describe('HomeView browsing', () => {
     expect(wrapper.find('.results').text()).toContain('Latest selection')
     expect(wrapper.find('.results').text()).not.toContain('Stale selection')
   })
+
+  it('clears the book grid without removing browse menus', async () => {
+    const wrapper = mount(HomeView, {
+      global: {
+        stubs: {
+          NavBar: true,
+          BookSearch: true,
+          BookOfTheWeek: true,
+          AuthorSpotlight: true,
+          BookGrid: {
+            props: ['books'],
+            template: `
+              <div>
+                <button
+                  class="close-book-list"
+                  @click="$emit('close')"
+                >
+                  Close
+                </button>
+                <span class="listed-book-count">{{ books.length }}</span>
+              </div>
+            `
+          }
+        }
+      }
+    })
+
+    await wrapper.findAll('.browse-genre').at(0).findAll('button').at(1).trigger('click')
+    await flushPromises()
+    expect(wrapper.find('#search').exists()).toBe(true)
+    expect(wrapper.find('.listed-book-count').text()).toBe('1')
+
+    await wrapper.find('.close-book-list').trigger('click')
+    expect(wrapper.find('#search').exists()).toBe(true)
+    expect(wrapper.find('.listed-book-count').text()).toBe('0')
+    expect(wrapper.findAll('.browse-genre')).toHaveLength(2)
+  })
 })

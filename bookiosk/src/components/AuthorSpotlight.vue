@@ -58,7 +58,7 @@ onMounted(async () => {
       <div v-else>
         <h2 id="author-spotlight-title">{{ author.name }}</h2>
         <p class="bk-text">
-          {{ volume.description || `Explore books by ${author.name}.` }}
+          {{ authors.description || `Explore books by ${author.name}.` }}
         </p>
         <a
           class="explore-author-btn"
@@ -66,7 +66,7 @@ onMounted(async () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Explore her books
+          Explore her books ↗
         </a>
       </div>
     </div>
@@ -83,26 +83,27 @@ onMounted(async () => {
   box-sizing: border-box;
   width: 90%;
   max-width: 70%;
-  min-height: 260px;
+  min-height: 200px;
+  height: 30px;
   flex-shrink: 0;
   padding: 10px 20px;
   margin-top: 40px;
   background-color: #f8eae2;
   border-radius: 15px;
-  border: 2px solid #f83a0036;
+  border: 2px solid #fdf4e7;
 }
 
 .author-image {
   display: grid;
   flex: 0 0 40%;
-  min-height: 220px;
+  min-height: 180px;
   place-items: center;
   overflow: hidden;
 }
 
 .author-image img {
   max-width: 100%;
-  max-height: 240px;
+  max-height: 170px;
   object-fit: contain;
   border-radius: 6px;
 }
@@ -120,7 +121,7 @@ onMounted(async () => {
   color: #d43200;
   background-color: #f8eae2;
   font-size: 0.5rem;
-  font-weight: 700;
+  font-weight: bolder;
   border: 1px solid #f83a00;
 }
 
@@ -133,12 +134,12 @@ onMounted(async () => {
 .author-details p {
   margin-bottom: 1rem;
   color: #193819a8;
-  font-size: 0.95rem;
+  font-size: 0.7rem;
   line-height: 1.5;
 }
 
 .author-details p.bk-text {
-  max-width: 150px;
+  max-width: 950px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

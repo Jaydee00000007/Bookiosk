@@ -8,11 +8,19 @@
         import BrowseByRegion from '../components/Search/BrowseByRegion.vue'
         import BookOfTheWeek from '../components/BookOfTheWeek.vue'
         import AuthorSpotlight from '../components/AuthorSpotlight.vue'
+        import MyShelf from '../components/MyShelf.vue';
 
         const books = ref([])
         const searchLoading = ref(false)
         const searchError = ref('')
         let browseRequestId = 0
+
+        function clearBookList() {
+            browseRequestId++
+            books.value = []
+            searchError.value = ''
+            searchLoading.value = false
+        }
 
         async function handleBrowse(query) {
             const requestId = ++browseRequestId
@@ -42,6 +50,11 @@
             books.value = results
             searchError.value = ''
         }
+
+        function handleSearchLoadingChange(loading) {
+            searchLoading.value = loading
+        }
+
 </script>
 
 <template>
@@ -50,11 +63,11 @@
         <div class="main-content">
             <div class="herosection">
                 <h1>Stories from Nigeria and <span>across Africa</span></h1>
-                <div class="search-space">
-                    <div class="search-area">
+                <div class="search-space" id="search-space">
+                    <div class="search-area" id="search-area">
                         <BookSearch
                             @search-results="handleSearchResults"
-                            @loading-change="searchLoading = $event"
+                            @loading-change="handleSearchLoadingChange"
                         />
                     </div>
                     <div class="filter-space">
@@ -64,20 +77,23 @@
                     </div>
                 </div>
             </div>
-            <div id="search" class="book-grid">
+            <div id="search" class="book-grid glass-card2">
                     <p v-if="searchError" class="search-error" role="alert">
                         {{ searchError }}
                     </p>
                     <BookGrid
                         :books="books"
                         :loading="searchLoading"
+                        closable
                         empty-message="Search for books to see them here."
+                        @close="clearBookList"
                     />
                 </div>
-            <BrowseByGenre @browse="handleBrowse" />
+            <BrowseByGenre @browse="handleBrowse" id="browse"/>
             <BrowseByRegion @browse="handleBrowse" />
-            <BookOfTheWeek />
+            <BookOfTheWeek id="featured"/>
             <AuthorSpotlight />
+            <MyShelf id="myshelf"/>
         </div>
     </div>
 </template>
@@ -87,13 +103,18 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 2rem;
+        box-sizing: border-box;
+        background-color: #faf9f5 ;
         width: 100%;
-        height: 100%;
+        min-width: 0;
+        min-height: 100vh;
+        height: auto;
         border-radius: 5px;
         align-self: center;
-        border:#193819 1px solid;
         padding: 20px;
+        font-family: plus jakarta sans, sans-serif;
 
         .herosection{
             display: flex;
@@ -101,21 +122,23 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100%;
+            height: auto;
             border-radius: 5px;
             align-self: center;
             padding: 20px 0px;
-            border:#eef103 1px solid;
+            margin-top: 40px;
 
             h1{
-                font-size: 55px;
+                font-size: 50px;
+                font-family: playfair display, serif;
+                font-weight: 700;
                 text-align: center;
                 margin-bottom: -20px;
-                width: 70%;
+                width: 60%;
                 text-wrap: wrap;
-                border:#040629 1px solid;
                 span{
-                    color: #193819;
+                    color: #052E16;
+                    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 }
             }
         }
@@ -129,7 +152,6 @@
         width: 80%;
         border-radius: 5px;
         align-self: center;
-        border:#dd0c4b 1px solid;
         padding: 20px 0px;
 
         .search-area{
@@ -139,35 +161,37 @@
             width: 100%;
             height: 100%;
             border-radius: 5px;
-            border:#193819 1px solid;
             padding: 20px 0px;
         }
         .filter-space{
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100%;
-            margin-top: -20px;
-            border-radius: 5px;
-            border:#193819 1px solid;
-            padding: 20px 0px;
+            gap: 8px;
+            width: min(100%, 420px);
+            height: auto;
+            margin-top: -5px;
+            border-radius: 35px;
+            background-color: #f5f2eb;
+            box-sizing: border-box;
+            padding: 8px;
 
             .filter-btn{
-                width: 100px;
+                width: 100%;
+                min-width: 0;
                 height: 30px;
-                margin: 0px 10px;
-                border-radius: 5px;
-                border:#193819 1px solid;
-                background-color: #193819;
+                margin: 0;
+                border-radius: 15px;
+                border:#193819 0px solid;
+                background-color: #f5f2eb;
                 font-size: 13px;
-                color: #fff;
+                color: #193819;
                 cursor: pointer;
 
                 &:hover{
                     background-color: #fff;
                     color: #193819;
-                    border:#193819 1px solid;
                 }
             }
         }
@@ -178,12 +202,32 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        box-sizing: border-box;
         background-color: #f5f2Eb ;
-        width: 90%;
-        height: 100%;
+        width: 80%;
+        max-width: 100%;
+        min-width: 0;
+        height: auto;
         border-radius: 10px;
         align-self: center;
-        border:#193819 1px solid;
+        border: 2px solid #ccc;
         padding: 20px 10px;
+    }
+    
+     @media (max-width: 700px) {
+        .main-content{
+            .herosection{
+                h1{
+                    font-size: 30px;
+                    width: 90%;
+                    margin-top: -10px;
+                }
+            }
+
+        }
+
+        .book-grid{
+            width: 100%;
+        }
     }
 </style>

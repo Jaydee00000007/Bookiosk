@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMyShelf } from '../composables/useMyShelf'
 
 const router = useRouter()
 
@@ -12,8 +13,10 @@ const props = defineProps({
 })
 
 const imageFailed = ref(false)
+const { isSaved, toggleBook } = useMyShelf()
 const volume = computed(() => props.book.volumeInfo || {})
 const title = computed(() => volume.value.title || 'Untitled book')
+const saved = computed(() => isSaved(props.book.id))
 const authors = computed(() => {
   const names = volume.value.authors
   return Array.isArray(names) && names.length ? names.join(', ') : 'Unknown author'
@@ -53,6 +56,15 @@ function openBook() {
     <div class="book-content">
       <h2>{{ title }}</h2>
       <p>{{ authors }}</p>
+      <button
+        class="shelf-button"
+        :class="{ 'is-saved': saved }"
+        type="button"
+        :aria-pressed="saved"
+        @click="toggleBook(book)"
+      >
+        {{ saved ? 'Remove from My Shelf' : 'Add to My Shelf' }}
+      </button>
       <button class="details-button" type="button" @click="openBook">
         View book
       </button>
@@ -151,8 +163,25 @@ function openBook() {
   background: #193819;
 }
 
+.shelf-button {
+  min-height: 40px;
+  margin-bottom: 0.5rem;
+  border: 1px solid #193819;
+  border-radius: 8px;
+  color: #193819;
+  font-weight: 700;
+  cursor: pointer;
+  background: #fff;
+}
+
+.shelf-button.is-saved {
+  color: #fff;
+  background: #476b45;
+}
+
 .details-button:focus-visible,
-.cover-button:focus-visible {
+.cover-button:focus-visible,
+.shelf-button:focus-visible {
   outline: 3px solid #8dbb91;
   outline-offset: 3px;
 }

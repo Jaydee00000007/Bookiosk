@@ -50,10 +50,11 @@
             display: flex;
             align-items: center;    
             justify-content: center;
-            width: 70%;
-            height: 50px;
+            width: 60%;
+            height: 45px;
             border-radius: 15px;
-            border: 1px solid #ccc;
+            border: 2px solid #ccc;
+            background-color: #ffffff;
             padding-right: 10px;
             align-self: center;
             overflow: hidden;
@@ -64,14 +65,15 @@
                 border-radius: 15px;
                 border: none;
                 cursor: pointer;
+                background-color: #ffffff;
 
                 button{
                     width: 100%;
                     height: 100%;
-                    background-color: none;
+                    background-color: transparent;
                     border: none;
                     outline: none;
-                    font-size: 16px;
+                    font-size: 10px;
                     cursor: pointer;
 
                     span{
@@ -87,8 +89,38 @@
                 height: 100%;
                 border: none;
                 outline: none;
-                font-size: 16px;
+                font-size: 13px;
                 padding: 10px;
+                background-color: #ffffff;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .searchinput{
+                width: 90%;
+                height: 40px;
+                border-radius: 15px;
+                padding-right: 5px;
+
+                .search-btn {
+                    width:15%;
+                    height: 100%;
+
+                    button{
+                        font-size: 8px;
+
+                        span{
+                            font-size: 18px;
+                        }
+                    }
+                }
+
+                input{
+                    width: 85%;
+                    height: 100%;
+                    font-size: 12px;
+                    padding: 8px;
+                }
             }
         }
 </style>

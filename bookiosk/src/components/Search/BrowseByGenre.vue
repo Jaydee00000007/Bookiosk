@@ -27,16 +27,19 @@ const genres = [
 
 <style scoped>
 .browse-genre {
-    width: 90%;
-    padding: 20px;
+    box-sizing: border-box;
+    width: 80%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 5px 20px;
     background-color: transparent;
     border-radius: 10px;
-    border: 1px solid #193819;
 
     h2 {
         font-size: 28px;
         margin-bottom: 10px;
         color: #193819;
+        font-family: playfair display, serif;
     }
     p {
         font-size: 16px;
@@ -45,9 +48,10 @@ const genres = [
     }
 
     ul {
+        box-sizing: border-box;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 5px;
+        grid-template-columns: repeat(6, minmax(min(150px, 100%), 1fr));
+        gap: 0px;
         justify-content: space-between;
         align-items: flex-start;
         list-style-type: none;
@@ -57,15 +61,18 @@ const genres = [
             display: inline-flex;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
             height: 110px;
-            width: 140px;
+            width: 90%;
+            min-width: 0;
             background-color: #f5f2Eb;
             border: 0px solid #193819;
             margin: 10px 0;
             padding: 15px 15px;
             border-radius: 5px;
             text-align: center;
-            font-size: 24px;
+            font-size: 16px;
+            font-family: playfair display, serif;
             transition: background-color 0.3s, color 0.3s;
             
 
@@ -87,4 +94,14 @@ const genres = [
         }
     }
 }   
+
+@media (max-width: 768px) {
+    .browse-genre {
+        ul {
+            grid-template-columns: repeat(2, minmax(min(150px, 100%), 1fr));
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
 </style>

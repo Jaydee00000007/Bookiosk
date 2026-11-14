@@ -23,16 +23,16 @@
             <div id="primary-menu" class="nav-content" :class="{ open: menuOpen }">
                 <ul class="nav-link">
                     <li>
-                        <RouterLink :to="{ path: '/mainview', hash: '#search' }">Search</RouterLink>
+                        <RouterLink :to="{ path: '/', hash: '#search-space' }">Search</RouterLink>
                     </li>
                     <li>
-                        <RouterLink :to="{ path: '/mainview', hash: '#browse' }">Browse</RouterLink>
+                        <RouterLink :to="{ path: '/', hash: '#browse' }">Browse</RouterLink>
                     </li>
                     <li>
                         <RouterLink :to="{ path: '/mainview', hash: '#featured' }">Featured</RouterLink>
                     </li>
                     <li>
-                        <RouterLink :to="{ path: '/mainview', hash: '#myshelf' }">My Shelf</RouterLink>
+                        <RouterLink :to="{ path: '/', hash: '#myshelf' }">My Shelf</RouterLink>
                     </li>
 
                     <li>
@@ -61,9 +61,11 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        
         padding: 3px 10px;
         
-        border-bottom: 1px solid #F5F2EB;
+        background-color: #faf9f5;
+        border-bottom: 2px solid #bebcb2ee;
 
         .logoT{
             max-width: 130px;
@@ -80,17 +82,24 @@
 
                 li{
                     list-style-type: none;
-                    font-size: 16px;
+                    font-family: plus-jakarta-sans, sans-serif;
+                    font-size: 13px;
                     font-weight: 500;
                     cursor: pointer;
 
                     a{
                         text-decoration: none;
-                        color: #111111;
+                        color:#666666;
 
                          &:hover{
                         color: orangered;
                          }
+                    }
+
+                    button{
+                        background-color: transparent;
+                        border: none;
+                        cursor: pointer;
                     }
                    
                 }
@@ -113,7 +122,7 @@
             }
     }
 
-     @media (max-width: 900px) {
+     @media (max-width: 700px) {
                 nav {
                     padding: 0 16px;
                 }
@@ -164,14 +173,4 @@
                 }
                 }
 
-                @media (max-width: 700px) {
-                nav {
-                    padding: 0 16px;
-                }
-
-                .logo {
-                    width: auto;
-                    padding: 0 12px;
-                }
-                }
 </style>

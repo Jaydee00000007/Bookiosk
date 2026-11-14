@@ -26,16 +26,19 @@ const regions = [
 
 <style scoped>
 .browse-genre {
-    width: 90%;
-    padding: 20px;
+    box-sizing: border-box;
+    width: 80%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 5px 20px;
     background-color: transparent;
     border-radius: 10px;
-    border: 1px solid #0000006e;
 
     h2 {
         font-size: 28px;
         margin-bottom: 10px;
         color: #193819;
+        font-family: playfair display, serif;
     }
     p {
         font-size: 16px;
@@ -44,8 +47,9 @@ const regions = [
     }
 
     ul {
+        box-sizing: border-box;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
         gap: 5px;
         justify-content: space-between;
         align-items: flex-start;
@@ -56,8 +60,10 @@ const regions = [
             display: inline-flex;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
             height: 110px;
-            width: 140px;
+            width: 100%;
+            min-width: 0;
             background-color: transparent;
             box-shadow:inset 0 0 0 1px #1938194f;
             border: 3px solid #19381923;
@@ -102,4 +108,14 @@ const regions = [
         }
     }
 }   
+
+@media (max-width: 768px) {
+    .browse-genre {
+        ul {
+            grid-template-columns: repeat(2, minmax(min(150px, 100%), 1fr));
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}
 </style>

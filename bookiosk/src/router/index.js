@@ -4,7 +4,7 @@ import SignUpView from '../views/SignUpView.vue'
 import SignInView from '../views/SignInView.vue'
 import ForgotPassword from '../views/ForgotPassword.vue'
 import BookDetailsView from '../views/BookDetailsView.vue'
-import ShelfView from '../views/ShelfView.vue'
+import MyShelf from '../components/MyShelf.vue'
 
 
 const routes = [
@@ -14,12 +14,24 @@ const routes = [
   { path: '/signin', name: 'signin', component: SignInView},
   { path: '/forgotpassword', name: 'forgotpassword', component: ForgotPassword},
   { path: '/book/:id', name: 'book-details', component: BookDetailsView },
-  { path: '/shelf', name: 'shelf', component: ShelfView }
+  { path: '/shelf', name: 'shelf', component: MyShelf }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+    scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: 'smooth',
+      }
+    }
+    return { top: 0 }
+  },
 })
 
 export default router
