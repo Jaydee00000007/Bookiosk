@@ -140,6 +140,7 @@
                     align-items: stretch;
                     background: #fff;
                     box-shadow: 0 12px 24px rgba(7, 26, 41, 0.22);
+                    z-index: 1;
                 }
                 .nav-content.open {
                     display: flex;

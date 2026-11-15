@@ -151,4 +151,36 @@
             }
         }
     }
+
+    @media (max-width: 700px){
+        .top-content{
+            align-items: center;
+            .partA{
+                .quicklink-title,
+                .support-title{
+                    display: none;
+                }
+                .logo-image{
+                    display: inline-flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                }
+            }
+            .partB{
+                .quick-links,
+                .support-links{
+                    display: none;
+                }
+                .about-bk p{
+                    text-align: center;
+                }
+            }
+
+            .partC{
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
 </style>
