@@ -20,7 +20,7 @@ const { savedBooks } = useMyShelf()
         class="qty-savedbooks"
         :aria-label="`${savedBooks.length} saved ${savedBooks.length === 1 ? 'book' : 'books'}`"
       >
-        {{ savedBooks.length }} books
+        {{ savedBooks.length }} {{ savedBooks.length === 1 ? 'book' : 'books' }}
       </span>
     </header>
 
@@ -50,8 +50,7 @@ const { savedBooks } = useMyShelf()
 <style scoped>
 .my-shelf {
   box-sizing: border-box;
-  width: 70%;
-  max-width: 1200px;
+  width: min(82%, 1120px);
   min-width: 0;
 }
 
@@ -65,7 +64,8 @@ const { savedBooks } = useMyShelf()
 
 .top h2 {
   margin: 0;
-  font-size: large;
+  color: #193819;
+  font-size: 1.5rem;
   font-family: playfair display, serif;
 }
 
@@ -75,10 +75,11 @@ const { savedBooks } = useMyShelf()
   min-height: 1.5rem;
   place-items: center;
   border-radius: 999px;
-  background: #f5f2eb;
-  font-weight: 50;
-  padding: 5px 10px;
-  font-size: smaller;
+  padding: 0.35rem 0.75rem;
+  color: #193819;
+  background: #e8eee5;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .shelf-body {
@@ -86,10 +87,11 @@ const { savedBooks } = useMyShelf()
   width: 100%;
   min-width: 0;
   min-height: 160px;
-  padding: 1rem;
-  border: 1px dashed #a1a8a3;
-  border-radius: 10px;
-  background-color: #f5f2eb;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  border: 1px solid #e4e6dc;
+  border-radius: 16px;
+  background: #fffefa;
+  box-shadow: 0 10px 28px rgb(25 56 25 / 6%);
 }
 
 .shelf-state {
@@ -115,13 +117,12 @@ const { savedBooks } = useMyShelf()
 }
 
 .shelf-browse-link {
-  padding: 0.4rem 0.5rem;
+  padding: 0.55rem 1rem;
   border-radius: 999px;
-  color:#687168;
-  border: 1px solid #687168a9;
-  background: #f5f2eb;
-  font-weight: 100;
-  width: 150px;
+  color: #fff;
+  border: 1px solid #193819;
+  background: #193819;
+  font-weight: 600;
   text-decoration: none;
   text-align: center;
 }
@@ -133,5 +134,20 @@ const { savedBooks } = useMyShelf()
 
 .shelf-grid {
   width: 100%;
+}
+
+.shelf-grid :deep(.book-grid) {
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.shelf-grid :deep(.book-card) {
+  border: 1px solid #e8e9e1;
+  background: #fff;
+}
+
+@media (max-width: 700px) {
+  .my-shelf {
+    width: 100%;
+  }
 }
 </style>

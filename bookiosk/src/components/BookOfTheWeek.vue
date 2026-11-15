@@ -1,13 +1,25 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { useMyShelf } from '../composables/useMyShelf'
 import { searchBooks } from '../services/googleBooks'
+
+const props = defineProps({
+  mostViewedBook: {
+    type: Object,
+    default: null
+  },
+  mostViewedBookReady: {
+    type: Boolean,
+    default: true
+  }
+})
 
 const book = ref(null)
 const loading = ref(true)
 const error = ref('')
 const imageFailed = ref(false)
+let fallbackRequestId = 0
 
 const volume = computed(() => book.value?.volumeInfo || {})
 const title = computed(() => volume.value.title || 'Book of the week')
@@ -17,6 +29,7 @@ const cover = computed(() => {
 
   return image?.replace(/^http:/, 'https:')
 })
+const isMostViewed = computed(() => Boolean(props.mostViewedBook))
 
 const { isSaved, toggleBook } = useMyShelf()
 
@@ -24,25 +37,52 @@ watch(cover, () => {
   imageFailed.value = false
 })
 
-onMounted(async () => {
-  try {
-    const books = await searchBooks('African literature', {
-      orderBy: 'relevance',
-      maxResults: 12
-    })
-    book.value = books[0] || null
-  } catch (err) {
-    error.value = err.message || 'Unable to load the book of the week.'
-  } finally {
-    loading.value = false
-  }
-})
+watch(
+  [() => props.mostViewedBook, () => props.mostViewedBookReady],
+  async ([mostViewedBook, ready]) => {
+    if (mostViewedBook) {
+      fallbackRequestId++
+      book.value = mostViewedBook
+      error.value = ''
+      loading.value = false
+      return
+    }
+
+    if (!ready) {
+      loading.value = true
+      return
+    }
+
+    const requestId = ++fallbackRequestId
+    loading.value = true
+
+    try {
+      const books = await searchBooks('African literature', {
+        orderBy: 'relevance',
+        maxResults: 12
+      })
+
+      if (requestId === fallbackRequestId && !props.mostViewedBook) {
+        book.value = books[0] || null
+      }
+    } catch (loadError) {
+      if (requestId === fallbackRequestId && !props.mostViewedBook) {
+        error.value = loadError.message || 'Unable to load the book of the week.'
+      }
+    } finally {
+      if (requestId === fallbackRequestId && !props.mostViewedBook) {
+        loading.value = false
+      }
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <section class="book-of-the-week-content" aria-labelledby="book-of-the-week-title">
     <div class="book-details">
-      <span>Book of the week</span>
+      <span>{{ isMostViewed ? 'Most-viewed book' : 'Book of the week' }}</span>
       <p v-if="loading" role="status">Finding a featured book...</p>
       <p v-else-if="error" role="alert">{{ error }}</p>
       <p v-else-if="!book">No featured book is available right now.</p>
@@ -64,7 +104,7 @@ onMounted(async () => {
             type="button"
             @click="toggleBook(book)"
           >
-            {{ isSaved(book.id) ? 'Remove from Shelf' : 'Add to Library' }}
+            {{ isSaved(book.id) ? 'Remove from My Shelf' : 'Add to My Shelf' }}
           </button>
         </div>
       </template>
@@ -93,14 +133,14 @@ onMounted(async () => {
   align-items: center;
   gap: 2rem;
   box-sizing: border-box;
-  width: 80%;
-  max-width: 70%;
-  min-height: 260px;
+  width: min(82%, 1120px);
+  min-height: 300px;
   flex-shrink: 0;
-  padding: 10px 20px;
-  background-color: #ffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.603);
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid #e8e7de;
+  border-radius: 20px;
+  background-color: #fffefa;
+  box-shadow: 0 14px 38px rgb(25 56 25 / 8%);
 }
 
 .book-details {
@@ -111,12 +151,14 @@ onMounted(async () => {
 }
 
 .book-details > span {
+  display: inline-block;
   color: #193819;
-  background-color: #d6e6d4;
-  font-weight: bolder;
-  font-size: 10px;
-  padding: 0.25rem 0.5rem;
-  border-radius: 10px;
+  background-color: #e8eee5;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
 }
 
 .book-details h2 {
@@ -200,8 +242,9 @@ onMounted(async () => {
   .book-of-the-week-content {
     flex-direction: column-reverse;
     width: 95%;
-    max-width: 90%;
-    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    padding: 1.25rem;
   }
 
   .book-image {

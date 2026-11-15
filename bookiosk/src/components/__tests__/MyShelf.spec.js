@@ -33,7 +33,7 @@ describe('MyShelf', () => {
   it('reactively updates the saved count and empty state', async () => {
     const wrapper = mountShelf()
 
-    expect(wrapper.get('.qty-savedbooks').text()).toBe('0')
+    expect(wrapper.get('.qty-savedbooks').text()).toBe('0 books')
     expect(wrapper.find('.shelf-empty').exists()).toBe(true)
     expect(wrapper.get('.shelf-browse-link').attributes('href')).toBe('#search')
 
@@ -43,7 +43,7 @@ describe('MyShelf', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.get('.qty-savedbooks').text()).toBe('1')
+    expect(wrapper.get('.qty-savedbooks').text()).toBe('1 book')
     expect(wrapper.get('.saved-grid').text()).toBe('African stories')
     expect(wrapper.find('.shelf-empty').exists()).toBe(false)
     expect(wrapper.find('.shelf-browse-link').exists()).toBe(false)
@@ -51,7 +51,7 @@ describe('MyShelf', () => {
     removeBook('book-1')
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.get('.qty-savedbooks').text()).toBe('0')
+    expect(wrapper.get('.qty-savedbooks').text()).toBe('0 books')
     expect(wrapper.find('.shelf-empty').exists()).toBe(true)
   })
 

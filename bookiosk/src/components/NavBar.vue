@@ -61,9 +61,7 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        
         padding: 3px 10px;
-        
         background-color: #faf9f5;
         border-bottom: 2px solid #bebcb2ee;
 

@@ -35,4 +35,29 @@ describe('AuthorSpotlight', () => {
     expect(wrapper.find('a.explore-author-btn').attributes('href'))
       .toBe('https://books.google.com/books?id=book-1')
   })
+
+  it('uses the author of the most-viewed book when one is provided', async () => {
+    const mostViewedBook = {
+      id: 'popular-book',
+      volumeInfo: {
+        title: 'The most-read story',
+        authors: ['Ama Writer'],
+        imageLinks: { thumbnail: 'https://books.example/popular-cover.jpg' }
+      }
+    }
+
+    const wrapper = mount(AuthorSpotlight, {
+      props: {
+        mostViewedBook,
+        mostViewedBookReady: true
+      }
+    })
+
+    await flushPromises()
+
+    expect(searchBooks).not.toHaveBeenCalled()
+    expect(wrapper.get('h2').text()).toBe('Ama Writer')
+    expect(wrapper.get('.author-details > span').text()).toBe('Most-viewed author')
+    expect(wrapper.text()).toContain('The most-read story')
+  })
 })

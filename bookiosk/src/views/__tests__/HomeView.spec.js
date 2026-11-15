@@ -5,11 +5,16 @@ import HomeView from '../HomeView.vue'
 import { searchBooks } from '../../services/googleBooks'
 
 vi.mock('../../services/googleBooks', () => ({
+  getBookById: vi.fn(),
   searchBooks: vi.fn()
 }))
 
 vi.mock('../../components/NavBar.vue', () => ({
   default: { template: '<nav />' }
+}))
+
+vi.mock('../../components/SiteFooter.vue', () => ({
+  default: { template: '<footer />' }
 }))
 
 describe('HomeView browsing', () => {
@@ -53,6 +58,58 @@ describe('HomeView browsing', () => {
       { maxResults: 12 }
     )
     expect(wrapper.find('.results').text()).toContain('African stories')
+  })
+
+  it('combines the search text with the selected regional filter', async () => {
+    const wrapper = mount(HomeView, {
+      global: {
+        stubs: {
+          NavBar: true,
+          BookSearch: {
+            props: ['search'],
+            emits: ['update:search', 'search'],
+            template: `
+              <form @submit.prevent="$emit('search', search)">
+                <input
+                  :value="search"
+                  @input="$emit('update:search', $event.target.value)"
+                >
+              </form>
+            `
+          },
+          BookOfTheWeek: true,
+          AuthorSpotlight: true,
+          BookGrid: true
+        }
+      }
+    })
+
+    await wrapper.findAll('.filter-btn').at(0).trigger('click')
+    await wrapper.get('input').setValue('Achebe')
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+
+    expect(searchBooks).toHaveBeenLastCalledWith(
+      'subject:"Nigerian literature" Achebe',
+      { maxResults: 12 }
+    )
+
+    await wrapper.findAll('.filter-btn').at(1).trigger('click')
+    await flushPromises()
+
+    expect(searchBooks).toHaveBeenLastCalledWith(
+      'subject:"African literature" Achebe',
+      { maxResults: 12 }
+    )
+    expect(wrapper.findAll('.filter-btn').at(1).attributes('aria-pressed')).toBe('true')
+
+    await wrapper.findAll('.filter-btn').at(2).trigger('click')
+    await flushPromises()
+
+    expect(searchBooks).toHaveBeenLastCalledWith(
+      'Achebe',
+      { maxResults: 12 }
+    )
   })
 
   it('keeps the newest selection when browse requests finish out of order', async () => {

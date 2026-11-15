@@ -1,17 +1,30 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { authors } from '../data/collections'
 import { searchBooks } from '../services/googleBooks'
 
-const author = authors[0]
+const props = defineProps({
+  mostViewedBook: {
+    type: Object,
+    default: null
+  },
+  mostViewedBookReady: {
+    type: Boolean,
+    default: true
+  }
+})
+
+const fallbackAuthor = authors[0]
 const book = ref(null)
 const loading = ref(true)
 const error = ref('')
 const imageFailed = ref(false)
+let fallbackRequestId = 0
 
 const volume = computed(() => book.value?.volumeInfo || {})
-const title = computed(() => volume.value.title || `Books by ${author.name}`)
+const title = computed(() => volume.value.title || `Books by ${fallbackAuthor.name}`)
+const authorName = computed(() => volume.value.authors?.[0] || fallbackAuthor.name)
 const cover = computed(() => {
   const image = volume.value.imageLinks?.thumbnail ||
     volume.value.imageLinks?.smallThumbnail
@@ -19,21 +32,53 @@ const cover = computed(() => {
   return image?.replace(/^http:/, 'https:')
 })
 const exploreLink = computed(() => volume.value.previewLink ||
-  `https://books.google.com/books?q=${encodeURIComponent(author.name)}`)
+  `https://books.google.com/books?q=${encodeURIComponent(authorName.value)}`)
+const isMostViewed = computed(() => Boolean(props.mostViewedBook))
 
-onMounted(async () => {
-  try {
-    const books = await searchBooks(author.query, {
-      orderBy: 'relevance',
-      maxResults: 1
-    })
-    book.value = books[0] || null
-  } catch (err) {
-    error.value = err.message || 'Unable to load the featured author.'
-  } finally {
-    loading.value = false
-  }
+watch(cover, () => {
+  imageFailed.value = false
 })
+
+watch(
+  [() => props.mostViewedBook, () => props.mostViewedBookReady],
+  async ([mostViewedBook, ready]) => {
+    if (mostViewedBook) {
+      fallbackRequestId++
+      book.value = mostViewedBook
+      error.value = ''
+      loading.value = false
+      return
+    }
+
+    if (!ready) {
+      loading.value = true
+      return
+    }
+
+    const requestId = ++fallbackRequestId
+    loading.value = true
+
+    try {
+      const books = await searchBooks(fallbackAuthor.query, {
+        orderBy: 'relevance',
+        maxResults: 1
+      })
+
+      if (requestId === fallbackRequestId && !props.mostViewedBook) {
+        book.value = books[0] || null
+      }
+    } catch (loadError) {
+      if (requestId === fallbackRequestId && !props.mostViewedBook) {
+        error.value = loadError.message || 'Unable to load the featured author.'
+      }
+    } finally {
+      if (requestId === fallbackRequestId && !props.mostViewedBook) {
+        loading.value = false
+      }
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -51,14 +96,16 @@ onMounted(async () => {
       </div>
     </div>
     <div class="author-details">
-      <span>Author spotlight</span>
+      <span>{{ isMostViewed ? 'Most-viewed author' : 'Author spotlight' }}</span>
       <p v-if="loading" role="status">Finding a featured author...</p>
       <p v-else-if="error" role="alert">{{ error }}</p>
       <p v-else-if="!book">No featured author is available right now.</p>
       <div v-else>
-        <h2 id="author-spotlight-title">{{ author.name }}</h2>
+        <h2 id="author-spotlight-title">{{ authorName }}</h2>
         <p class="bk-text">
-          {{ authors.description || `Explore books by ${author.name}.` }}
+          {{ isMostViewed
+            ? `Readers are discovering ${title}. Explore more by ${authorName}.`
+            : `Explore books by ${authorName}.` }}
         </p>
         <a
           class="explore-author-btn"
@@ -66,7 +113,7 @@ onMounted(async () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Explore her books ↗
+          Explore their books ↗
         </a>
       </div>
     </div>
@@ -81,16 +128,14 @@ onMounted(async () => {
   align-items: center;
   gap: 2rem;
   box-sizing: border-box;
-  width: 90%;
-  max-width: 70%;
-  min-height: 200px;
-  height: 30px;
+  width: min(82%, 1120px);
+  min-height: 230px;
   flex-shrink: 0;
-  padding: 10px 20px;
-  margin-top: 40px;
-  background-color: #f8eae2;
-  border-radius: 15px;
-  border: 2px solid #fdf4e7;
+  padding: clamp(1rem, 3vw, 2rem);
+  margin-top: 0;
+  background-color: #f4f0e7;
+  border-radius: 20px;
+  border: 1px solid #e8e2d5;
 }
 
 .author-image {
@@ -116,13 +161,12 @@ onMounted(async () => {
 
 .author-details > span {
   display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 10px;
-  color: #d43200;
-  background-color: #f8eae2;
-  font-size: 0.5rem;
-  font-weight: bolder;
-  border: 1px solid #f83a00;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  color: #625233;
+  background-color: #e9e1d1;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .author-details h2 {
@@ -133,24 +177,26 @@ onMounted(async () => {
 
 .author-details p {
   margin-bottom: 1rem;
-  color: #193819a8;
-  font-size: 0.7rem;
+  color: #586258;
+  font-size: 0.88rem;
   line-height: 1.5;
 }
 
 .author-details p.bk-text {
-  max-width: 950px;
+  max-width: 60ch;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .explore-author-btn {
   display: inline-block;
-  border-radius: 16px;
+  border-radius: 999px;
   font-size: 0.8rem;
   font-weight: bold;
-  color: #d43200;
+  color: #193819;
   text-decoration: none;
 }
 
@@ -173,10 +219,28 @@ onMounted(async () => {
 
 @media (max-width: 600px) {
   .author-spotlight-content {
-    width: 90%;
-    max-width: 90%;
+    width: 100%;
     gap: 1rem;
-    padding: 16px;
+    padding: 1.25rem;
+  }
+
+  .author-image {
+    flex-basis: 35%;
+  }
+
+  .author-image img {
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 700px) {
+  .author-spotlight-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .author-image {
+    min-height: 140px;
   }
 }
 </style>

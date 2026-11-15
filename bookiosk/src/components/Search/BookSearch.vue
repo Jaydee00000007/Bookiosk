@@ -1,129 +1,125 @@
 <script setup>
-    import { ref } from "vue";
-    import { searchBooks } from "../../services/googleBooks";
+const searchQuery = defineModel('search', {
+  type: String,
+  default: ''
+})
 
-        const emit = defineEmits(["search-results", "loading-change"]);
-        const searchQuery = ref("");
-        const books = ref([]);
-        const loading = ref(false);
-        const error = ref("");
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  error: {
+    type: String,
+    default: ''
+  }
+})
 
-        const handleSearch = async () => {
-        if (!searchQuery.value.trim()) return;
+const emit = defineEmits(['search'])
 
-        loading.value = true;
-        emit("loading-change", true);
-        error.value = "";
-
-        try {
-            books.value = await searchBooks(searchQuery.value);
-            emit("search-results", books.value);
-        } catch (err) {
-            error.value = err.message;
-            books.value = [];
-            emit("search-results", books.value);
-        } finally {
-            loading.value = false;
-            emit("loading-change", false);
-        }
-        };
+function handleSearch() {
+  emit('search', searchQuery.value.trim())
+}
 </script>
 
 <template>
-    <form @submit.prevent="handleSearch" class="searchinput">
-            <div class="search-btn">
-                <button type="submit" :disabled="loading">
-                    <span>⌕</span>
-                </button>
-            </div>
-            <input
-            v-model="searchQuery" 
-            placeholder="Search by title, author, or ISBN..."
-            @input="$emit('update:search', searchQuery)"
-            type="text">
+  <div class="search-control">
+    <form class="searchinput" role="search" @submit.prevent="handleSearch">
+      <button
+        class="search-button"
+        type="submit"
+        :disabled="props.loading"
+        aria-label="Search books"
+      >
+        <span aria-hidden="true">⌕</span>
+      </button>
+      <input
+        v-model="searchQuery"
+        type="search"
+        aria-label="Search by title, author, or ISBN"
+        placeholder="Search by title, author, or ISBN..."
+      >
     </form>
-    <p v-if="error" class="search-error" role="alert">{{ error }}</p>
+    <p v-if="props.error" class="search-error" role="alert">
+      {{ props.error }}
+    </p>
+  </div>
 </template>
 
 <style scoped>
-        .searchinput{
-            display: flex;
-            align-items: center;    
-            justify-content: center;
-            width: 60%;
-            height: 45px;
-            border-radius: 15px;
-            border: 2px solid #ccc;
-            background-color: #ffffff;
-            padding-right: 10px;
-            align-self: center;
-            overflow: hidden;
+.search-control {
+  width: 100%;
+}
 
-            .search-btn {
-                width:10%;
-                height: 100%;
-                border-radius: 15px;
-                border: none;
-                cursor: pointer;
-                background-color: #ffffff;
+.searchinput {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: min(100%, 680px);
+  min-height: 48px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid #d6d9ce;
+  border-radius: 999px;
+  background: #fffefa;
+  box-shadow: 0 8px 24px rgb(25 56 25 / 7%);
+}
 
-                button{
-                    width: 100%;
-                    height: 100%;
-                    background-color: transparent;
-                    border: none;
-                    outline: none;
-                    font-size: 10px;
-                    cursor: pointer;
+.search-button {
+  display: grid;
+  flex: 0 0 52px;
+  min-height: 48px;
+  place-items: center;
+  border: 0;
+  color: #fff;
+  background: #193819;
+  cursor: pointer;
+}
 
-                    span{
-                        font-size: 20px;
-                    }
-                }
+.search-button span {
+  font-size: 1.5rem;
+  line-height: 1;
+}
 
+.search-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
 
-            }
+.searchinput input {
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border: 0;
+  outline: 0;
+  color: #193819;
+  background: transparent;
+  font: inherit;
+}
 
-            input{
-                width: 90%;
-                height: 100%;
-                border: none;
-                outline: none;
-                font-size: 13px;
-                padding: 10px;
-                background-color: #ffffff;
-            }
-        }
+.searchinput:focus-within {
+  outline: 3px solid #8dbb91;
+  outline-offset: 3px;
+}
 
-        @media (max-width: 700px) {
-            .searchinput{
-                width: 90%;
-                height: 40px;
-                border-radius: 15px;
-                padding-right: 5px;
+.search-error {
+  margin: 0.75rem auto 0;
+  color: #9f2d25;
+  text-align: center;
+}
 
-                .search-btn {
-                    width:15%;
-                    height: 100%;
+@media (max-width: 700px) {
+  .search-button {
+    flex-basis: 44px;
+    min-height: 44px;
+  }
 
-                    button{
-                        font-size: 8px;
-
-                        span{
-                            font-size: 18px;
-                        }
-                    }
-                }
-
-                input{
-                    width: 85%;
-                    height: 100%;
-                    font-size: 12px;
-                    padding: 8px;
-                }
-            }
-        }
+  .searchinput,
+  .searchinput input {
+    min-height: 44px;
+  }
+}
 </style>
-
-
-

@@ -1,6 +1,7 @@
 <script setup>
-        import { ref } from 'vue'
-        import { searchBooks } from '../services/googleBooks'
+        import { onMounted, ref } from 'vue'
+        import { getBookById, searchBooks } from '../services/googleBooks'
+        import { getMostViewedBookId } from '../composables/useBookViews'
         import BookSearch from '../components/Search/BookSearch.vue';
         import NavBar from '../components/NavBar.vue'
         import BookGrid from '../components/BookGrid.vue'
@@ -9,51 +10,94 @@
         import BookOfTheWeek from '../components/BookOfTheWeek.vue'
         import AuthorSpotlight from '../components/AuthorSpotlight.vue'
         import MyShelf from '../components/MyShelf.vue';
+        import SiteFooter from '../components/SiteFooter.vue'
 
         const books = ref([])
         const searchLoading = ref(false)
         const searchError = ref('')
-        let browseRequestId = 0
+        const searchQuery = ref('')
+        const activeRegion = ref('Global')
+        const mostViewedBook = ref(null)
+        const mostViewedBookReady = ref(false)
+        const mostViewedBookError = ref('')
+        let searchRequestId = 0
 
         function clearBookList() {
-            browseRequestId++
+            searchRequestId++
             books.value = []
             searchError.value = ''
             searchLoading.value = false
         }
 
-        async function handleBrowse(query) {
-            const requestId = ++browseRequestId
+        function scopedQuery(query, region) {
+            const scope = {
+                Nigeria: 'subject:"Nigerian literature"',
+                Africa: 'subject:"African literature"',
+                Global: ''
+            }[region] || ''
+
+            return [scope, query.trim()].filter(Boolean).join(' ') || 'literature'
+        }
+
+        async function runSearch(query, region = activeRegion.value) {
+            const requestId = ++searchRequestId
             searchLoading.value = true
             searchError.value = ''
 
             try {
-                const results = await searchBooks(query, { maxResults: 12 })
+                const results = await searchBooks(
+                    scopedQuery(query, region),
+                    { maxResults: 12 }
+                )
 
-                if (requestId === browseRequestId) {
+                if (requestId === searchRequestId) {
                     books.value = results
                 }
             } catch (error) {
-                if (requestId === browseRequestId) {
+                if (requestId === searchRequestId) {
                     books.value = []
                     searchError.value = error.message || 'Unable to load books.'
                 }
             } finally {
-                if (requestId === browseRequestId) {
+                if (requestId === searchRequestId) {
                     searchLoading.value = false
                 }
             }
         }
 
-        function handleSearchResults(results) {
-            browseRequestId++
-            books.value = results
-            searchError.value = ''
+        function handleSearch(query) {
+            searchQuery.value = query
+            return runSearch(query)
         }
 
-        function handleSearchLoadingChange(loading) {
-            searchLoading.value = loading
+        function handleRegionFilter(region) {
+            activeRegion.value = region
+            return runSearch(searchQuery.value, region)
         }
+
+        function handleBrowse(query) {
+            searchQuery.value = query
+            activeRegion.value = 'Global'
+            return runSearch(query, 'Global')
+        }
+
+        onMounted(async () => {
+            const bookId = getMostViewedBookId()
+
+            if (!bookId) {
+                mostViewedBookReady.value = true
+                return
+            }
+
+            try {
+                mostViewedBook.value = await getBookById(bookId)
+            } catch (error) {
+                mostViewedBookError.value =
+                    error.message || 'Unable to load the most-viewed book.'
+            } finally {
+                mostViewedBookReady.value = true
+            }
+        })
 
 </script>
 
@@ -66,21 +110,28 @@
                 <div class="search-space" id="search-space">
                     <div class="search-area" id="search-area">
                         <BookSearch
-                            @search-results="handleSearchResults"
-                            @loading-change="handleSearchLoadingChange"
+                            v-model:search="searchQuery"
+                            :loading="searchLoading"
+                            :error="searchError"
+                            @search="handleSearch"
                         />
                     </div>
                     <div class="filter-space">
-                        <button class="filter-btn">Nigeria</button>
-                        <button class="filter-btn">Africa</button>
-                        <button class="filter-btn">Global</button>
+                        <button
+                            v-for="region in ['Nigeria', 'Africa', 'Global']"
+                            :key="region"
+                            class="filter-btn"
+                            :class="{ 'is-active': activeRegion === region }"
+                            :aria-pressed="activeRegion === region"
+                            type="button"
+                            @click="handleRegionFilter(region)"
+                        >
+                            {{ region }}
+                        </button>
                     </div>
                 </div>
             </div>
             <div id="search" class="book-grid glass-card2">
-                    <p v-if="searchError" class="search-error" role="alert">
-                        {{ searchError }}
-                    </p>
                     <BookGrid
                         :books="books"
                         :loading="searchLoading"
@@ -91,10 +142,21 @@
                 </div>
             <BrowseByGenre @browse="handleBrowse" id="browse"/>
             <BrowseByRegion @browse="handleBrowse" />
-            <BookOfTheWeek id="featured"/>
-            <AuthorSpotlight />
+            <p v-if="mostViewedBookError" class="feature-error" role="alert">
+                {{ mostViewedBookError }}
+            </p>
+            <BookOfTheWeek
+                id="featured"
+                :most-viewed-book="mostViewedBook"
+                :most-viewed-book-ready="mostViewedBookReady"
+            />
+            <AuthorSpotlight
+                :most-viewed-book="mostViewedBook"
+                :most-viewed-book-ready="mostViewedBookReady"
+            />
             <MyShelf id="myshelf"/>
         </div>
+        <SiteFooter class="footer" />
     </div>
 </template>
 
@@ -194,7 +256,24 @@
                     color: #193819;
                 }
             }
+
+            .filter-btn.is-active{
+                background-color: #193819;
+                color: #fff;
+                font-weight: 600;
+            }
+
+            .filter-btn:focus-visible{
+                outline: 3px solid #8dbb91;
+                outline-offset: 2px;
+            }
         }
+    }
+
+    .feature-error{
+        width: min(82%, 1120px);
+        margin: 0;
+        color: #9f2d25;
     }
 
     .book-grid{
@@ -214,6 +293,11 @@
         padding: 20px 10px;
     }
     
+    .footer{
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
      @media (max-width: 700px) {
         .main-content{
             .herosection{
@@ -227,6 +311,10 @@
         }
 
         .book-grid{
+            width: 100%;
+        }
+
+        .feature-error{
             width: 100%;
         }
     }
