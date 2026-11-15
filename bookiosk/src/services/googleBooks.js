@@ -212,7 +212,6 @@ export function useFetch(urlPathFactory, options = {}) {
     const path = toValue(urlPathFactory)
     const { ttl = DEFAULT_TTL, ...fetchOptions } = toValue(options)
     const url = buildApiUrl(path)
-    const fullUrl = url.toString()
     const cacheKey = getCacheKey(url)
     const cachedData = getCachedResponse(cacheKey, ttl)
 
