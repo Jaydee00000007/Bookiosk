@@ -115,13 +115,6 @@ describe('HomeView browsing', () => {
   it('keeps the newest selection when browse requests finish out of order', async () => {
     let resolvePoetry
     let resolveRegion
-    searchBooks
-      .mockImplementationOnce(() => new Promise(resolve => {
-        resolvePoetry = resolve
-      }))
-      .mockImplementationOnce(() => new Promise(resolve => {
-        resolveRegion = resolve
-      }))
 
     const wrapper = mount(HomeView, {
       global: {
@@ -137,6 +130,17 @@ describe('HomeView browsing', () => {
         }
       }
     })
+    // Let the one-time homepage feature request finish before controlling
+    // the two browse requests whose completion order this test exercises.
+    await flushPromises()
+
+    searchBooks
+      .mockImplementationOnce(() => new Promise(resolve => {
+        resolvePoetry = resolve
+      }))
+      .mockImplementationOnce(() => new Promise(resolve => {
+        resolveRegion = resolve
+      }))
 
     const browseMenus = wrapper.findAll('.browse-genre')
     await browseMenus.at(0).findAll('button').at(1).trigger('click')

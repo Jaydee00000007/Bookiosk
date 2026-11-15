@@ -18,6 +18,7 @@
         const searchQuery = ref('')
         const activeRegion = ref('Global')
         const mostViewedBook = ref(null)
+        const featuredBook = ref(null)
         const mostViewedBookReady = ref(false)
         const mostViewedBookError = ref('')
         let searchRequestId = 0
@@ -84,16 +85,20 @@
         onMounted(async () => {
             const bookId = getMostViewedBookId()
 
-            if (!bookId) {
-                mostViewedBookReady.value = true
-                return
-            }
-
             try {
-                mostViewedBook.value = await getBookById(bookId)
+                if (bookId) {
+                    mostViewedBook.value = await getBookById(bookId)
+                } else {
+                    // One shared homepage request feeds both featured sections.
+                    const results = await searchBooks('African literature', {
+                        orderBy: 'relevance',
+                        maxResults: 12
+                    })
+                    featuredBook.value = results[0] || null
+                }
             } catch (error) {
                 mostViewedBookError.value =
-                    error.message || 'Unable to load the most-viewed book.'
+                    error.message || 'Unable to load homepage features.'
             } finally {
                 mostViewedBookReady.value = true
             }
@@ -148,10 +153,12 @@
             <BookOfTheWeek
                 id="featured"
                 :most-viewed-book="mostViewedBook"
+                :featured-book="featuredBook"
                 :most-viewed-book-ready="mostViewedBookReady"
             />
             <AuthorSpotlight
                 :most-viewed-book="mostViewedBook"
+                :featured-book="featuredBook"
                 :most-viewed-book-ready="mostViewedBookReady"
             />
             <MyShelf id="myshelf"/>

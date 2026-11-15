@@ -9,6 +9,10 @@ const props = defineProps({
     type: Object,
     default: null
   },
+  featuredBook: {
+    type: Object,
+    default: null
+  },
   mostViewedBookReady: {
     type: Boolean,
     default: true
@@ -40,11 +44,19 @@ watch(cover, () => {
 })
 
 watch(
-  [() => props.mostViewedBook, () => props.mostViewedBookReady],
-  async ([mostViewedBook, ready]) => {
+  [() => props.mostViewedBook, () => props.featuredBook, () => props.mostViewedBookReady],
+  async ([mostViewedBook, featuredBook, ready]) => {
     if (mostViewedBook) {
       fallbackRequestId++
       book.value = mostViewedBook
+      error.value = ''
+      loading.value = false
+      return
+    }
+
+    if (featuredBook) {
+      fallbackRequestId++
+      book.value = featuredBook
       error.value = ''
       loading.value = false
       return
