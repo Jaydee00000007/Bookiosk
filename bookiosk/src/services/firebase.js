@@ -15,7 +15,7 @@ export function requireFirebaseConfig() {
   }
 }
 
-export async function firebaseAuthRequest(method, payload, idToken) {
+export async function firebaseAuthRequest(method, payload) {
   requireFirebaseConfig()
   const endpoint = method === 'signup' ? 'accounts:signUp' : method === 'signin' ? 'accounts:signInWithPassword' : 'accounts:sendOobCode'
   const response = await fetch(`https://identitytoolkit.googleapis.com/v1/${endpoint}?key=${firebaseApiKey}`, {
