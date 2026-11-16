@@ -20,30 +20,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
-
-const email = ref('');
-const loading = ref(false);
-const message = ref('');
-const error = ref('');
-
-const handleForgotPassword = async () => {
-  loading.value = true;
-  message.value = '';
-  error.value = '';
-
+import { ref } from 'vue'
+import { useFirebaseAuth } from '../services/firebaseAuth'
+const { sendPasswordReset } = useFirebaseAuth()
+const email = ref('')
+const loading = ref(false)
+const message = ref('')
+const error = ref('')
+async function handleForgotPassword() {
+  loading.value = true
+  message.value = ''
+  error.value = ''
   try {
-    const response = await axios.post('/api/forgot-password', {
-      email: email.value
-    });
-    message.value = response.data.message || 'Check your inbox for a password reset link.';
+    await sendPasswordReset(email.value)
+    message.value = 'If an account exists for this email, a password reset email has been sent.'
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to send reset link. Please try again.';
+    error.value = err.message || 'Failed to send reset link. Please try again.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style scoped>
