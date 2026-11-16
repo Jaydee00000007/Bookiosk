@@ -1,19 +1,26 @@
 <script setup>
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+import { useFirebaseAuth } from '../services/firebaseAuth'
+const router = useRouter()
+const { signIn } = useFirebaseAuth()
 const email = ref('')
 const password = ref('')
 const keepSignedIn = ref(false)
 const statusMessage = ref('')
-
-function handleSubmit() {
-  statusMessage.value =
-    'Your details are valid, but sign-in is not connected to an authentication service yet. Nothing was sent or saved.'
-}
-
-function clearStatus() {
+const loading = ref(false)
+async function handleSubmit() {
+  loading.value = true
   statusMessage.value = ''
+  try {
+    await signIn({ email: email.value, password: password.value })
+    statusMessage.value = 'Signed in successfully.'
+    await router.push({ name: 'home', hash: '#myshelf' })
+  } catch (error) {
+    statusMessage.value = error.message || 'Unable to sign in. Please try again.'
+  } finally { loading.value = false }
 }
+function clearStatus() { statusMessage.value = '' }
 </script>
 
 <template>

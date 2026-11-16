@@ -1,28 +1,35 @@
 <script setup>
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+import { useFirebaseAuth } from '../services/firebaseAuth'
+const router = useRouter()
+const { signUp } = useFirebaseAuth()
 const fullname = ref('')
 const email = ref('')
 const password = ref('')
 const selectedGenres = ref([])
 const agreedToTerms = ref(false)
 const statusMessage = ref('')
+const loading = ref(false)
 const genres = ['Fiction', 'Poetry', 'History', 'Folktale', 'Politics', 'Biography']
-
 function selectGenre(genre) {
   selectedGenres.value = selectedGenres.value.includes(genre)
-    ? selectedGenres.value.filter(selectedGenre => selectedGenre !== genre)
+    ? selectedGenres.value.filter(item => item !== genre)
     : [...selectedGenres.value, genre]
 }
-
-function handleSubmit() {
-  statusMessage.value =
-    'Your details are valid, but sign-up is not connected to an authentication service yet. Nothing was sent or saved.'
-}
-
-function clearStatus() {
+async function handleSubmit() {
+  loading.value = true
   statusMessage.value = ''
+  try {
+    await signUp({ name: fullname.value, email: email.value, password: password.value })
+    localStorage.setItem('bookiosk-reading-preferences', JSON.stringify(selectedGenres.value))
+    statusMessage.value = 'Your account is ready. Welcome to Bookiosk!'
+    await router.push({ name: 'home', hash: '#myshelf' })
+  } catch (error) {
+    statusMessage.value = error.message || 'Unable to create your account. Please try again.'
+  } finally { loading.value = false }
 }
+function clearStatus() { statusMessage.value = '' }
 </script>
 
 <template>
