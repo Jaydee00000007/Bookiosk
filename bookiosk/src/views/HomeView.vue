@@ -145,8 +145,8 @@
                         @close="clearBookList"
                     />
                 </div>
-            <BrowseByGenre @browse="handleBrowse" id="browse"/>
-            <BrowseByRegion @browse="handleBrowse" />
+            <BrowseByGenre @browse="handleBrowse" id="browse" class="genre"/>
+            <BrowseByRegion @browse="handleBrowse" class="region"/>
             <p v-if="mostViewedBookError" class="feature-error" role="alert">
                 {{ mostViewedBookError }}
             </p>
@@ -184,6 +184,11 @@
         align-self: center;
         padding: 20px;
         font-family: plus jakarta sans, sans-serif;
+
+        .genre,
+        .region{
+            width: 100%;
+        }
 
         .herosection{
             display: flex;

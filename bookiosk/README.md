@@ -31,6 +31,16 @@ npm install
 npm run dev
 ```
 
+### Authentication API
+
+The sign-in and account creation forms send JSON `POST` requests to
+`/api/auth/signin` and `/api/auth/signup` by default. Configure a different
+base URL with `VITE_AUTH_API_BASE_URL` when the auth API is hosted elsewhere.
+The sign-in request includes `email`, `password`, and `keepSignedIn`; sign-up
+includes `name`, `email`, `password`, and the selected `genres`. Successful and
+error responses may include a `message` string. Keep this setting separate
+from `VITE_API_BASE_URL`, which is used for Google Books requests.
+
 ### Compile and Minify for Production
 
 ```sh
