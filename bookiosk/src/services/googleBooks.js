@@ -10,10 +10,12 @@ const DEFAULT_API_BASE_URL = 'https://www.googleapis.com/books/v1'
 const PRODUCTION_API_BASE_URL = '/api/books'
 
 function getApiBaseUrl() {
-  const configuredUrl = import.meta.env.VITE_API_BASE_URL?.trim()
-
-  if (configuredUrl) return configuredUrl.replace(/\/+$/, '')
+  // Always route deployed production traffic through the Vercel serverless
+  // function so the Google Books API key stays on the server.
   if (import.meta.env.PROD) return PRODUCTION_API_BASE_URL
+
+  const configuredUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+  if (configuredUrl) return configuredUrl.replace(/\/+$/, '')
   return DEFAULT_API_BASE_URL
 }
 
