@@ -5,13 +5,26 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-export const firebaseReady = Object.values(firebaseConfig).every(Boolean)
+const requiredFirebaseVariables = {
+  apiKey: 'VITE_FIREBASE_API_KEY',
+  authDomain: 'VITE_FIREBASE_AUTH_DOMAIN',
+  projectId: 'VITE_FIREBASE_PROJECT_ID',
+  appId: 'VITE_FIREBASE_APP_ID',
+}
+
+const missingFirebaseVariables = Object.entries(firebaseConfig)
+  .filter(([, value]) => !value)
+  .map(([key]) => requiredFirebaseVariables[key])
+
+export const firebaseReady = missingFirebaseVariables.length === 0
 export const firebaseProjectId = firebaseConfig.projectId
 export const firebaseApiKey = firebaseConfig.apiKey
 
 export function requireFirebaseConfig() {
   if (!firebaseReady) {
-    throw new Error('Firebase is not configured. Add the VITE_FIREBASE_* environment variables in Vercel and your local .env file.')
+    throw new Error(
+      `Firebase configuration is incomplete. Missing: ${missingFirebaseVariables.join(', ')}. Check the Preview environment variables in Vercel, then redeploy.`,
+    )
   }
 }
 
