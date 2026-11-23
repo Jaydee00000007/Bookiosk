@@ -2,19 +2,22 @@ import { ref, watch } from 'vue'
 import { useFirebaseAuth } from '../services/firebaseAuth'
 import { firestoreRequest } from '../services/firebase'
 
-const STORAGE_KEY = 'bookiosk-my-shelf'
+const GUEST_STORAGE_KEY = 'bookiosk-my-shelf:guest'
 const { currentUser, getIdToken } = useFirebaseAuth()
-const savedBooks = ref(loadShelf())
+const savedBooks = ref(loadShelf(GUEST_STORAGE_KEY))
 const syncing = ref(false)
 const syncError = ref('')
 let activeUid = null
 
-function loadShelf() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') }
+function loadShelf(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '[]') }
   catch { return [] }
 }
+function storageKey() {
+  return activeUid ? `bookiosk-my-shelf:${activeUid}` : GUEST_STORAGE_KEY
+}
 function persistLocal() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(savedBooks.value))
+  localStorage.setItem(storageKey(), JSON.stringify(savedBooks.value))
 }
 function fromFirestore(document) {
   const encoded = document.fields?.bookJson?.stringValue
@@ -29,8 +32,8 @@ async function loadCloudShelf() {
   try {
     const token = await getIdToken()
     const result = await firestoreRequest(`users/${user.uid}/shelf`, { token })
-    savedBooks.value = (result.documents || []).map(fromFirestore).filter(Boolean)
     activeUid = user.uid
+    savedBooks.value = (result.documents || []).map(fromFirestore).filter(Boolean)
     persistLocal()
   } catch (error) {
     syncError.value = error.message || 'Could not sync your shelf.'
@@ -39,7 +42,10 @@ async function loadCloudShelf() {
 }
 watch(currentUser, user => {
   if (user) void loadCloudShelf()
-  else { activeUid = null; savedBooks.value = loadShelf() }
+  else {
+    activeUid = null
+    savedBooks.value = loadShelf(GUEST_STORAGE_KEY)
+  }
 }, { immediate: true })
 watch(savedBooks, persistLocal, { deep: true })
 
