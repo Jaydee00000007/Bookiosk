@@ -5,6 +5,7 @@ import SignInView from '../views/SignInView.vue'
 import ForgotPassword from '../views/ForgotPassword.vue'
 import BookDetailsView from '../views/BookDetailsView.vue'
 import MyShelf from '../components/MyShelf.vue'
+import ProfileView from '../views/ProfileView.vue'
 import { useFirebaseAuth } from '../services/firebaseAuth'
 
 const routes = [
@@ -14,7 +15,8 @@ const routes = [
   { path: '/signin', name: 'signin', component: SignInView, meta: { guestOnly: true } },
   { path: '/forgotpassword', name: 'forgotpassword', component: ForgotPassword, meta: { guestOnly: true } },
   { path: '/book/:id', name: 'book-details', component: BookDetailsView },
-  { path: '/shelf', name: 'shelf', component: MyShelf, meta: { requiresAuth: true } }
+  { path: '/shelf', name: 'shelf', component: MyShelf, meta: { requiresAuth: true } },
+  { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } }
 ]
 
 const router = createRouter({
