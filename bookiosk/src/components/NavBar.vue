@@ -1,9 +1,11 @@
 <script setup>
     import { ref } from 'vue'
+    import { useTheme } from '../composables/useTheme'
     import { useFirebaseAuth } from '../services/firebaseAuth'
 
     const menuOpen = ref(false)
     const { currentUser, signOut } = useFirebaseAuth()
+    const { isDark, toggleTheme } = useTheme()
 </script>
 
 <template>
@@ -38,7 +40,7 @@
                     </li>
 
                     <li v-if="currentUser" class="account-item">
-                        <span class="account-email">{{ currentUser.displayName || currentUser.email }}</span>
+                        <RouterLink class="account-email" to="/profile">{{ currentUser.displayName || currentUser.email }}</RouterLink>
                         <button class="account-action" type="button" @click="signOut">Sign out</button>
                     </li>
                     <li v-else class="account-item">
@@ -47,7 +49,7 @@
                     <li>
                         <!-- From Uiverse.io by RiccardoRapelli --> 
                             <label class="switch">
-                                <input id="input" type="checkbox" checked="darkTheme" />
+                                <input id="input" type="checkbox" :checked="isDark" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'" :aria-pressed="isDark" @change="toggleTheme" />
                                 <div class="slider round">
                                     <div class="sun-moon">
                                     <svg id="moon-dot-1" class="moon-dot" viewBox="0 0 100 100">
@@ -127,7 +129,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 3px 10px;
-  background-color: #faf9f5;
+  background-color: var(--bk-page, #faf9f5);
   border-bottom: 2px solid #bebcb2ee;
 }
 .logoT { max-width: 130px; max-height: auto; }
@@ -145,7 +147,8 @@
   font-weight: 500;
   cursor: pointer;
 }
-.nav-content ul li a { text-decoration: none; color: #666666; }
+.nav-content ul li a { text-decoration: none; color: var(--bk-muted, #666666); }
+.account-email { font: inherit; }
 .nav-content ul li a:hover { color: orangered; }
 .switch { position: relative; display: inline-block; width: 40px; height: 24px; }
 .switch #input { opacity: 0; width: 0; height: 0; }
@@ -217,7 +220,7 @@
   .navbarP .nav-content {
     display: none; position: absolute; top: 50px; left: 0; right: 0;
     padding: 18px 16px 20px; flex-direction: column; align-items: stretch;
-    background: #fff; box-shadow: 0 12px 24px rgba(7, 26, 41, 0.22); z-index: 1;
+    background: var(--bk-surface, #fff); box-shadow: 0 12px 24px rgba(7, 26, 41, 0.22); z-index: 1;
   }
   .navbarP .nav-content.open { display: flex; }
   .navbarP .nav-link {
