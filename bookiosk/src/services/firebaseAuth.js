@@ -37,6 +37,20 @@ export function useFirebaseAuth() {
     })
     return storeUser(data, data.displayName || '', keepSignedIn)
   }
+  async function updateProfile(displayName) {
+    const name = String(displayName || '').trim()
+    if (!name) throw new Error('Please enter a display name.')
+    const user = currentUser.value
+    if (!user) throw new Error('Please sign in to update your profile.')
+    const data = await firebaseAuthRequest('updateProfile', {
+      idToken: await getIdToken(), displayName: name, returnSecureToken: true,
+    })
+    const updated = { ...user, displayName: data.displayName || name,
+      idToken: data.idToken || user.idToken, refreshToken: data.refreshToken || user.refreshToken,
+      expiresAt: data.expiresIn ? Date.now() + Number(data.expiresIn) * 1000 : user.expiresAt }
+    persistUser(updated, Boolean(localStorage.getItem(USER_KEY)))
+    return updated
+  }
   async function sendPasswordReset(email) {
     return firebaseAuthRequest('reset', { requestType: 'PASSWORD_RESET', email: email.trim().toLowerCase() })
   }
@@ -54,5 +68,5 @@ export function useFirebaseAuth() {
     localStorage.removeItem(USER_KEY)
     sessionStorage.removeItem(USER_KEY)
   }
-  return { currentUser, signUp, signIn, sendPasswordReset, getIdToken, signOut }
+  return { currentUser, signUp, signIn, updateProfile, sendPasswordReset, getIdToken, signOut }
 }

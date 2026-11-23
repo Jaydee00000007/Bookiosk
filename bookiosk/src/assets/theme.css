@@ -1,0 +1,102 @@
+:root {
+  color-scheme: light;
+  --bk-page: #faf9f5;
+  --bk-surface: #fffefa;
+  --bk-surface-soft: #f5f2eb;
+  --bk-text: #273127;
+  --bk-muted: #687568;
+  --bk-border: #deded4;
+  --bk-accent: #193819;
+}
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --bk-page: #121a16;
+  --bk-surface: #1b2821;
+  --bk-surface-soft: #24342b;
+  --bk-text: #edf2eb;
+  --bk-muted: #b0beb2;
+  --bk-border: #3b5042;
+  --bk-accent: #a7c5a8;
+}
+html, body, #app { min-height: 100%; background: var(--bk-page); color: var(--bk-text); transition: background-color 220ms ease, color 220ms ease; }
+html[data-theme='dark'] body,
+html[data-theme='dark'] #app,
+html[data-theme='dark'] .homepage,
+html[data-theme='dark'] .main-content,
+html[data-theme='dark'] .book-details-page,
+html[data-theme='dark'] .details-main,
+html[data-theme='dark'] .shelf-page,
+html[data-theme='dark'] .my-shelf,
+html[data-theme='dark'] .navbarP {
+  color: var(--bk-text) !important;
+  background-color: var(--bk-page) !important;
+}
+html[data-theme='dark'] .navbarP,
+html[data-theme='dark'] .book-grid,
+html[data-theme='dark'] .book-panel,
+html[data-theme='dark'] .shelf-card,
+html[data-theme='dark'] .shelf-list,
+html[data-theme='dark'] .details-state {
+  border-color: var(--bk-border) !important;
+  background: var(--bk-surface) !important;
+  color: var(--bk-text) !important;
+}
+html[data-theme='dark'] .nav-content ul li a,
+html[data-theme='dark'] .back-link,
+html[data-theme='dark'] .book-authors,
+html[data-theme='dark'] .book-description,
+html[data-theme='dark'] .book-facts,
+html[data-theme='dark'] .account-email {
+  color: var(--bk-muted) !important;
+}
+html[data-theme='dark'] .herosection h1,
+html[data-theme='dark'] .book-information h1,
+html[data-theme='dark'] .details-container,
+html[data-theme='dark'] .shelf-title {
+  color: var(--bk-text) !important;
+}
+html[data-theme='dark'] .filter-space,
+html[data-theme='dark'] .filter-btn,
+html[data-theme='dark'] input,
+html[data-theme='dark'] textarea,
+html[data-theme='dark'] select {
+  color: var(--bk-text);
+  border-color: var(--bk-border);
+  background-color: var(--bk-surface-soft);
+}
+html[data-theme='dark'] .filter-btn.is-active,
+html[data-theme='dark'] .shelf-button,
+html[data-theme='dark'] .primary-link {
+  color: #142019 !important;
+  background: #a7c5a8 !important;
+}
+html[data-theme='dark'] .auth-page {
+  --paper: #121a16;
+  --ink: #edf2eb;
+  --muted: #b0beb2;
+  background: #121a16 !important;
+  color: #edf2eb !important;
+}
+html[data-theme='dark'] .auth-main,
+html[data-theme='dark'] .profile-page {
+  background: var(--bk-page) !important;
+  color: var(--bk-text) !important;
+}
+html[data-theme='dark'] .auth-main h2,
+html[data-theme='dark'] .auth-main .field label,
+html[data-theme='dark'] .auth-main .genre-field legend {
+  color: var(--bk-text) !important;
+}
+html[data-theme='dark'] .auth-main .field input {
+  color: var(--bk-text) !important;
+  border-color: var(--bk-border) !important;
+  background: var(--bk-surface) !important;
+}
+html[data-theme='dark'] .auth-main .auth-nav,
+html[data-theme='dark'] .auth-main .privacy-note,
+html[data-theme='dark'] .auth-main .form-heading > p:last-child {
+  color: var(--bk-muted) !important;
+}
+html[data-theme='dark'] .nav-content.open {
+  background: var(--bk-surface) !important;
+}
