@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { signIn, signUp } from '../services/auth'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps({
   mode: {
@@ -51,11 +54,8 @@ async function handleSubmit() {
           keepSignedIn: keepSignedIn.value
         })
 
-    statusMessage.value =
-      result?.message ||
-      (isSignUp
-        ? 'Your account has been created.'
-        : 'You are signed in.')
+    statusMessage.value = result?.message || (isSignUp ? 'Your account has been created.' : 'You are signed in.')
+    await router.push({ name: 'home', hash: '#myshelf' })
   } catch (error) {
     errorMessage.value = error.message
   } finally {
