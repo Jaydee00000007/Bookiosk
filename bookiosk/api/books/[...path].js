@@ -11,21 +11,42 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: { message: 'Google Books API is not configured on the server.' } })
   }
 
-  const rawPath = req.query.path
-  const pathParts = Array.isArray(rawPath) ? rawPath : rawPath ? [rawPath] : []
-  const path = pathParts.join('/')
+  // Native Vercel functions do not always expose catch-all path segments
+  // through req.query.path. Read the actual URL path first, then fall back
+  // to the catch-all query parameter for compatible runtimes.
+  let requestPath = ''
+  try {
+    const requestUrl = new URL(req.url, `https://${req.headers.host || 'localhost'}`)
+    const routePrefix = '/api/books/'
+    if (requestUrl.pathname.startsWith(routePrefix)) {
+      requestPath = requestUrl.pathname.slice(routePrefix.length)
+    }
+  } catch {
+    // Fall through to req.query.path below.
+  }
+
+  if (!requestPath) {
+    const rawPath = req.query?.path
+    const pathParts = Array.isArray(rawPath) ? rawPath : rawPath ? [rawPath] : []
+    requestPath = pathParts.join('/')
+  }
+
+  let path
+  try {
+    path = requestPath.split('/').map(segment => decodeURIComponent(segment)).join('/')
+  } catch {
+    return res.status(400).json({ error: { message: 'Invalid Google Books endpoint.' } })
+  }
+
   if (!/^volumes(?:\/[A-Za-z0-9_-]+)?$/.test(path)) {
     return res.status(400).json({ error: { message: 'Invalid Google Books endpoint.' } })
   }
 
   const target = new URL(`https://www.googleapis.com/books/v1/${path}`)
-  for (const [key, value] of Object.entries(req.query)) {
-    if (key === 'path' || key === 'key' || value === undefined) continue
-    if (Array.isArray(value)) {
-      for (const item of value) target.searchParams.append(key, item)
-    } else {
-      target.searchParams.set(key, value)
-    }
+  const incomingUrl = new URL(req.url, `https://${req.headers.host || 'localhost'}`)
+  for (const [key, value] of incomingUrl.searchParams.entries()) {
+    if (key === 'path' || key === 'key') continue
+    target.searchParams.append(key, value)
   }
   target.searchParams.set('key', apiKey)
 
