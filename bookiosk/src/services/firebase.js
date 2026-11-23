@@ -21,6 +21,7 @@ export async function firebaseAuthRequest(method, payload) {
     signup: 'accounts:signUp',
     signin: 'accounts:signInWithPassword',
     reset: 'accounts:sendOobCode',
+    updateProfile: 'accounts:update',
   }[method]
   const url = method === 'refresh'
     ? `https://securetoken.googleapis.com/v1/token?key=${firebaseApiKey}`
