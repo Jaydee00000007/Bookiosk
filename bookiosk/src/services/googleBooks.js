@@ -122,6 +122,9 @@ async function requestBooks(url, options = {}) {
       body = null
     }
     if (!response.ok) throw new Error(getApiErrorMessage(response.status, response.statusText, body))
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      throw new Error('Google Books returned an empty or invalid response. Please try again in a moment.')
+    }
     setCachedResponse(cacheKey, body)
     return body
   })()
@@ -146,7 +149,7 @@ export async function searchBooks(query, options = {}) {
   if (options.startIndex !== undefined) url.searchParams.set('startIndex', String(options.startIndex))
 
   const result = await requestBooks(url)
-  return result.items || []
+  return Array.isArray(result?.items) ? result.items : []
 }
 
 export function useFetch(urlPathFactory, options = {}) {
