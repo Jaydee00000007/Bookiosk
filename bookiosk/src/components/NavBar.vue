@@ -1,7 +1,9 @@
 <script setup>
     import { ref } from 'vue'
+    import { useFirebaseAuth } from '../services/firebaseAuth'
 
     const menuOpen = ref(false)
+    const { currentUser, signOut } = useFirebaseAuth()
 </script>
 
 <template>
@@ -35,11 +37,12 @@
                         <RouterLink :to="{ path: '/', hash: '#myshelf' }">My Shelf</RouterLink>
                     </li>
 
-                    <li>
-                        <div class="profile-details">
-                            <span>{{ image }}</span>
-                            <span>{{ Username }}</span>
-                        </div> 
+                    <li v-if="currentUser" class="account-item">
+                        <span class="account-email">{{ currentUser.displayName || currentUser.email }}</span>
+                        <button class="account-action" type="button" @click="signOut">Sign out</button>
+                    </li>
+                    <li v-else class="account-item">
+                        <RouterLink to="/signin">Sign in</RouterLink>
                     </li>
                     <li>
                         <!-- From Uiverse.io by RiccardoRapelli --> 
