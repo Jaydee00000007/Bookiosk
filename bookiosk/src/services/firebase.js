@@ -21,13 +21,10 @@ export async function firebaseAuthRequest(method, payload) {
     signup: 'accounts:signUp',
     signin: 'accounts:signInWithPassword',
     reset: 'accounts:sendOobCode',
-    refresh: null,
   }[method]
-
   const url = method === 'refresh'
     ? `https://securetoken.googleapis.com/v1/token?key=${firebaseApiKey}`
     : `https://identitytoolkit.googleapis.com/v1/${endpoint}?key=${firebaseApiKey}`
-
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': method === 'refresh' ? 'application/x-www-form-urlencoded' : 'application/json' },
@@ -41,7 +38,7 @@ export async function firebaseAuthRequest(method, payload) {
       EMAIL_NOT_FOUND: 'No account was found with this email.',
       INVALID_PASSWORD: 'The password is incorrect.',
       WEAK_PASSWORD: 'Choose a stronger password (at least 8 characters).',
-      TOO_MANY_ATTEMPTS_TRY_LATER: 'Too many attempts. Please wait a little and try again.',
+      TOO_MANY_ATTEMPTS_TRY_LATER: 'Too many attempts. Please wait and try again.',
     }
     const code = data.error?.message?.split(' : ')[0] || data.error?.message
     throw new Error(messages[code] || data.error?.message || 'Firebase authentication failed.')
