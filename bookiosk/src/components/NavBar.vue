@@ -263,5 +263,10 @@
   .navbarP .nav-link a { display: block; text-wrap: nowrap; padding: 12px 8px; }
   .nav-actions { justify-content: stretch; }
   .nav-actions button { flex: 1; }
+
+  .navB{
+    display: inline-block;
+    
+  }
 }
 </style>
