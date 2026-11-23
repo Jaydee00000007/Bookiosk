@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 
 import NavBar from '../components/NavBar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
+import BookReader from '../components/BookReader.vue'
 import { useMyShelf } from '../composables/useMyShelf'
 import { recordBookView } from '../composables/useBookViews'
 import { getBookById } from '../services/googleBooks'
@@ -89,7 +90,8 @@ watch(
             Return to browsing
           </RouterLink>
         </section>
-        <section v-else-if="book" class="book-panel" aria-labelledby="book-title">
+        <div v-else-if="book" class="book-detail-content">
+        <section class="book-panel" aria-labelledby="book-title">
           <div class="book-cover">
             <img
               v-if="cover && !imageFailed"
@@ -151,6 +153,12 @@ watch(
             </div>
           </div>
         </section>
+        <BookReader
+          :volume-id="book.id"
+          :embeddable="Boolean(book.accessInfo?.embeddable)"
+          :preview-link="book.volumeInfo?.previewLink || book.accessInfo?.webReaderLink || ''"
+        />
+        </div>
         <p v-else class="details-state">No details are available for this book.</p>
       </div>
     </main>
