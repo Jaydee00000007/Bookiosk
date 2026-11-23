@@ -11,9 +11,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: { message: 'Google Books API is not configured on the server.' } })
   }
 
-  // Native Vercel functions do not always expose catch-all path segments
-  // through req.query.path. Read the actual URL path first, then fall back
-  // to the catch-all query parameter for compatible runtimes.
   let requestPath = ''
   try {
     const requestUrl = new URL(req.url, `https://${req.headers.host || 'localhost'}`)
@@ -51,11 +48,41 @@ export default async function handler(req, res) {
   target.searchParams.set('key', apiKey)
 
   try {
-    const upstream = await fetch(target, { headers: { Accept: 'application/json' } })
-    const body = await upstream.json()
-    res.setHeader('Cache-Control', 'public, s-maxage=21600, stale-while-revalidate=86400')
+    const upstream = await fetch(target, {
+      headers: { Accept: 'application/json' },
+      cache: 'no-store'
+    })
+
+    // Read as text first so an empty or non-JSON upstream response can be
+    // reported accurately instead of being forwarded as a successful null.
+    const responseText = await upstream.text()
+    let body = null
+
+    if (responseText) {
+      try {
+        body = JSON.parse(responseText)
+      } catch {
+        body = null
+      }
+    }
+
+    res.setHeader('Cache-Control', 'no-store')
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    return res.status(upstream.status).json(body)
+
+    if (!upstream.ok) {
+      const message = body?.error?.message || `Google Books returned HTTP ${upstream.status}.`
+      return res.status(upstream.status).json({ error: { message } })
+    }
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return res.status(502).json({
+        error: {
+          message: 'Google Books returned an empty or invalid response. Please retry your request.'
+        }
+      })
+    }
+
+    return res.status(200).json(body)
   } catch {
     return res.status(502).json({ error: { message: 'Unable to reach Google Books right now.' } })
   }
