@@ -27,12 +27,13 @@ function fromFirestore(document) {
 async function loadCloudShelf() {
   const user = currentUser.value
   if (!user?.uid) return
+  activeUid = user.uid
+  savedBooks.value = loadShelf(storageKey())
   syncing.value = true
   syncError.value = ''
   try {
     const token = await getIdToken()
     const result = await firestoreRequest(`users/${user.uid}/shelf`, { token })
-    activeUid = user.uid
     savedBooks.value = (result.documents || []).map(fromFirestore).filter(Boolean)
     persistLocal()
   } catch (error) {
