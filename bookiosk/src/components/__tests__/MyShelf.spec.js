@@ -19,11 +19,7 @@ describe('MyShelf', () => {
         stubs: {
           RouterLink: {
             props: ['to'],
-            template: '<a :href="to.hash"><slot /></a>'
-          },
-          BookGrid: {
-            props: ['books'],
-            template: '<div class="saved-grid">{{ books.map(book => book.volumeInfo.title).join(", ") }}</div>'
+            template: '<a :href="to.hash || to"><slot /></a>'
           }
         }
       }
@@ -44,7 +40,7 @@ describe('MyShelf', () => {
     await wrapper.vm.$nextTick()
 
     expect(wrapper.get('.qty-savedbooks').text()).toBe('1 book')
-    expect(wrapper.get('.saved-grid').text()).toBe('African stories')
+    expect(wrapper.get('.book-title').text()).toBe('African stories')
     expect(wrapper.find('.shelf-empty').exists()).toBe(false)
     expect(wrapper.find('.shelf-browse-link').exists()).toBe(false)
 

@@ -21,11 +21,13 @@ const countLabel = computed(() => `${savedBooks.value.length} ${savedBooks.value
     </header>
 
     <div class="shelf-body">
-      <p v-if="loading || syncing" class="shelf-state" role="status">Syncing your bookshelf…</p>
+      <p v-if="loading || syncing" class="shelf-state" role="status">
+        {{ loading ? 'Loading your saved books...' : 'Syncing your bookshelf…' }}
+      </p>
       <p v-else-if="syncError" class="shelf-error" role="alert">{{ syncError }}</p>
 
       <div v-if="!savedBooks.length && !loading && !syncing" class="shelf-empty">
-        <span class="empty-mark" aria-hidden="true">✳</span>
+        <span class="empty-mark" aria-hidden="true">☰</span>
         <h3>Your shelf is waiting</h3>
         <p>Save a book that catches your attention and it will be kept here.</p>
         <RouterLink class="shelf-browse-link" :to="{ name: 'home', hash: '#search' }">Explore books</RouterLink>
